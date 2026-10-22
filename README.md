@@ -2,7 +2,7 @@
 
 **A malicious-URL risk scanner, built and shipped through a complete CI/CD → Kubernetes pipeline.**
 
-DevOps final project · Course 25CIAEC59 / 25CYAEC59 · Team of 3
+DevOps project · Course 24CIAEC59 · Team of 3
 
 > Status: planning. Tick items off in [Team roles](#7-team-roles) and [Milestones](#9-milestones) as they land.
 
