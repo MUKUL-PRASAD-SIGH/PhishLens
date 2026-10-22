@@ -4,7 +4,7 @@ Last updated: Oct 22, 2026
 
 ## Overview
 
-Three members ship PhishLens in 21 days across five phases. Each person owns one slice of the pipeline and hands work to the others at fixed points. The repo README holds the API contracts and system requirements; this plan covers who does what, in what order, and who waits on whom.
+Three members ship PhishLens in 21 days across five phases. Each person owns one slice of the pipeline and hands work to the others at fixed points. `docs/SPEC.md` holds the API contracts and system requirements; this plan covers who does what, in what order, and who waits on whom.
 
 | Member | Owns | Marks it covers | Reviews PRs from |
 | --- | --- | --- | --- |
@@ -199,7 +199,7 @@ M3 owns the Ansible host, the cluster and the demo machine, and runs the Compone
     - Handler: `restart phishlens` with `daemon_reload`, notified by the copy and template tasks.
     - *Needs:* M1's skeleton JAR (Day 2).
     - *Done when:* the first run reports changes, `curl <vm-ip>:8080/api/info` answers, and a second run reports `changed=0`.
-5. Write the manifests. Use the resource requests and limits from README §3.4.
+5. Write the manifests. Use the resource requests and limits from SPEC §1.4.
     - `01-configmap.yaml`.
     - `10-risk-model.yaml`: 2 replicas, ClusterIP on port 8000.
     - `20-scan-api.yaml`: 3 replicas, NodePort, `envFrom` the ConfigMap.
@@ -248,7 +248,7 @@ Eleven handoffs connect the three flows. Each has a latest day and a workaround,
 | 1 | scan-api skeleton source and JAR | M1 → M2, M3 | Day 2 | M3 uses any Spring Boot sample JAR; M2 drafts the Dockerfile against a plain Initializr project |
 | 2 | risk-model skeleton | M2 → M1 | Day 2 | M1 builds and tests on the fallback path only |
 | 3 | v1 rule weights | M2 → M1 | Day 5 | M1 ships three simple fallback rules: IP host, `@` sign, URL length |
-| 4 | Probe paths and metric names | M1 → M2, M3 | Day 6 | Use the values in README §4 and §5 |
+| 4 | Probe paths and metric names | M1 → M2, M3 | Day 6 | Use the values in SPEC §2 and §3 |
 | 5 | pytest suite and `requirements.txt` | M2 → M1 | Day 7 | The model test stage stays guarded off; JUnit alone still meets the test enhancement |
 | 6 | Both Dockerfiles and the compose file | M2 → M1, M3 | Day 7 | M3 keeps the nginx stand-in; the Jenkins Docker stage stays off |
 | 7 | Docker Hub repository names and tag format | M1 ↔ M3 | Day 8 | Build on the demo machine with the same tags and `minikube image load` |
@@ -265,7 +265,7 @@ Most blockers sit at the edges between folders, so the person who owns the other
 | --- | --- | --- | --- |
 | M1 | Model test stage fails in Jenkins (pip, venv, import paths) | M2 | The exact `requirements.txt` and pytest command; a check that tests pass outside Jenkins |
 | M1 | Docker stage fails (build context, Dockerfile path, image won't start) | M2 | Fixes the Dockerfile; confirms the build with `docker build` locally |
-| M1 | Image names or tags don't match what the cluster pulls | M3 | The names the manifests expect; agree once, then both copy them from README §5.4 |
+| M1 | Image names or tags don't match what the cluster pulls | M3 | The names the manifests expect; agree once, then both copy them from SPEC §3.4 |
 | M2 | Maven build inside the scan-api Dockerfile (dependency caching, JAR name) | M1 | `pom.xml` details: `finalName`, plugins, the build command |
 | M2 | JVM runs out of memory in the container | M1 + M3 | `JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75` and the 512Mi limit |
 | M2 | Model loads locally but not in the image (paths, scikit-learn version) | M3 | Runs the image on the cluster and reads the pod logs together |
@@ -381,7 +381,7 @@ The team needs one daily line each and six short syncs; everything else happens 
 
 | Day | Length | Purpose |
 | --- | --- | --- |
-| Day 1 | 60 min | Kickoff: agree the README contracts, set up the repo, choose the demo machine |
+| Day 1 | 60 min | Kickoff: agree the SPEC contracts, set up the repo, choose the demo machine |
 | Day 5 | 15 min | Contract check: fallback rules, probe paths, metric names |
 | Day 8 | 15 min | Pre-integration: image names, Docker Hub access, session time |
 | Day 13 | 15 min | Enhancements: confirm the v2 and v3 tags arrive by Day 14 |
@@ -393,4 +393,34 @@ The team needs one daily line each and six short syncs; everything else happens 
 - **Blocked for more than two hours:** post the error and the command you ran, and tag the helper named in "Where each member needs help".
 - **Requests to another member:** open a GitHub issue labelled with that member's area, not a chat message.
 - **Merging:** never merge your own PR without the review named in the overview table.
-- **Contract changes:** a README PR approved by all three, before any code changes.
+- **Contract changes:** a PR editing SPEC §3, approved by all three, before any code changes.
+
+## Working rules
+
+- **Branches:** `feat/<area>-<short-desc>`, e.g. `feat/api-scan-endpoint`, `feat/model-train`, `feat/k8s-hpa`. Nobody pushes directly to `main`.
+- **Commits:** follow [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:`, `test:`, `ci:`, `docs:`.
+- **Ownership:** stay inside your own folders. To change someone else's, open a PR or issue; `CODEOWNERS` tags the owner automatically.
+- **Updates:** post one line in the group chat whenever you merge something.
+
+## Rubric map
+
+| Requirement | Where | Owner |
+|---|---|---|
+| REST app with 2–3 endpoints that responds to curl | `scan-api/`, `risk-model/` | M1, M2 |
+| At least 2 branches and a merge | Git history and PRs | All |
+| Maven build | `scan-api/pom.xml` | M1 |
+| Jenkins: SCM, trigger, build step, archived artifact | `Jenkinsfile` | M1 |
+| CI enhancement | Test stage + commit-SHA versioning | M1 (tests from M1 and M2) |
+| Ansible: inventory, variable, handler, role | `ansible/` | M3 |
+| Dockerfile | `*/Dockerfile` | M2 |
+| Deployment (3 replicas) + Service | `k8s/` | M3 |
+| Scaling up and down | `scripts/demo-scale.sh` | M3 |
+| Deployment enhancement | Second microservice and multi-stage (M2); probes, ConfigMap, rollback (M3) | M2, M3 |
+| Repo link and coordinator access | `repo_link.txt`, GitHub settings | M1 |
+
+## Resume lines
+
+> **PhishLens — Malicious URL Risk Scanner: CI/CD & Kubernetes Deployment** | [GitHub link]
+> Java 17 / Spring Boot, Python / FastAPI, scikit-learn, Git, Maven, Jenkins, Docker, Ansible, Kubernetes
+> • Built a two-service URL risk-scoring API (Spring Boot gateway + ML model service) with a Jenkins pipeline triggered on every Git push, gated by JUnit/pytest tests and tagging every image with its commit SHA.
+> • Deployed on Kubernetes with ConfigMap-driven config, liveness/readiness probes and HPA autoscaling; provisioned hosts with an Ansible role and demonstrated rollback of a faulty release.
