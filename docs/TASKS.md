@@ -68,7 +68,7 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 ## M2 — Packager (Python model + Docker)
 
 **Days 1–2: setup**
-- [ ] Create `risk-model/` with FastAPI: `POST /predict` returns a fixed `0.5`, `GET /health` returns ok. **Merge this: M1 needs it.**
+- [x] Create `risk-model/` with FastAPI: `POST /predict` returns a fixed `0.5`, `GET /health` returns ok. **Merge this: M1 needs it.**
 - [ ] Pick a public phishing-URL dataset (Kaggle or PhishTank), note its license, start the download
 
 **Days 3–8: the model and containers (your Day 7 handoff unblocks both teammates)**
