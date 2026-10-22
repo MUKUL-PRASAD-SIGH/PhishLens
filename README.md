@@ -4,7 +4,7 @@
 
 DevOps project · Course 24CIAEC59 · Team of 3
 
-> Status: planning. Team members: start with [docs/TASKS.md](docs/TASKS.md).
+> Status: `risk-model` (ML service) done; `scan-api`, CI, Ansible and Kubernetes pending. Team members: start with [docs/TASKS.md](docs/TASKS.md).
 
 ---
 

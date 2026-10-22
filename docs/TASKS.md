@@ -2,6 +2,8 @@
 
 Find your name, read only your section, tick the boxes as you go. Details and reasons live in [TEAM_PLAN.md](TEAM_PLAN.md); API and config rules live in [SPEC.md](SPEC.md).
 
+**Progress:** `risk-model` code, tests, v1 heuristic, v2 model and model card are done (M2). `[x]` = done, `[~]` = written but not yet verified. Next up: `scan-api` (M1).
+
 ## The split at a glance
 
 | | **M1 — Builder** | **M2 — Packager** | **M3 — Deployer** |
@@ -69,22 +71,22 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 
 **Days 1–2: setup**
 - [x] Create `risk-model/` with FastAPI: `POST /predict` returns a fixed `0.5`, `GET /health` returns ok. **Merge this: M1 needs it.**
-- [ ] Pick a public phishing-URL dataset (Kaggle or PhishTank), note its license, start the download
+- [ ] Pick a public phishing-URL dataset (Kaggle or PhishTank), note its license, start the download *(Using synthetic data for now; see `risk-model/model/MODEL_CARD.md`. Swap in a real dataset with `train.py --data`.)*
 
 **Days 3–8: the model and containers (your Day 7 handoff unblocks both teammates)**
-- [ ] `features.py`: URL length, digits, special characters, `@`, IP host, subdomains, suspicious TLD, HTTPS, entropy
-- [ ] v1 heuristic score (weighted sum, 0–1). **Send the weights to M1 by Day 5.**
-- [ ] pytest suite: feature tests and API tests (200, 422, `/health`)
-- [ ] `risk-model/Dockerfile` (`python:3.12-slim`, non-root) and `.dockerignore`
+- [x] `features.py`: URL length, digits, special characters, `@`, IP host, subdomains, suspicious TLD, HTTPS, entropy
+- [x] v1 heuristic score (weighted sum, 0–1). **Send the weights to M1 by Day 5.** *(Weights: `V1_WEIGHTS` in `risk-model/app/scorer.py`. Still to send to M1.)*
+- [x] pytest suite: feature tests and API tests (200, 422, `/health`)
+- [~] `risk-model/Dockerfile` (`python:3.12-slim`, non-root) and `.dockerignore` *(Written, image build not yet verified; Docker was not running.)*
 - [ ] `scan-api/Dockerfile` as a **multi-stage** build (Maven build stage, JRE runtime stage, non-root); also build a single-stage one and note both image sizes
 - [ ] `docker-compose.yml`: `docker compose up --build`, then curl on port 8080 must show `source: model`
-- [ ] `/metrics` endpoint and the `phishlens_predictions_total` counter
+- [x] `/metrics` endpoint and the `phishlens_predictions_total` counter
 
 **Days 9–11: integration**
 - [ ] On M3's laptop, run compose first and prove the images work before Kubernetes
 
 **Days 12–16: extras**
-- [ ] `train.py` → `model.pkl` (v2), pin the scikit-learn version, write `MODEL_CARD.md` with v1 vs v2 accuracy, precision, recall. **Give M3 the v2 image tag by Day 14.**
+- [x] `train.py` → `model.pkl` (v2), pin the scikit-learn version, write `MODEL_CARD.md` with v1 vs v2 accuracy, precision, recall. *(v2 trained on synthetic data.)* **Give M3 the v2 image tag by Day 14.**
 - [ ] Update base images if Trivy flags fixable CRITICAL issues
 - [ ] Write the Prometheus explanation (sample scrape config and what each metric means)
 

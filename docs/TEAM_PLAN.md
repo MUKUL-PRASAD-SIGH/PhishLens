@@ -1,6 +1,6 @@
 # PhishLens — Team Execution Plan
 
-Last updated: Oct 22, 2026
+Last updated: Oct 22, 2026 (risk-model built; see TASKS.md for live progress)
 
 ## Overview
 

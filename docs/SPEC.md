@@ -151,7 +151,7 @@ Response (200):
 | Method | Path | Purpose |
 |---|---|---|
 | POST | `/predict` | Score one URL |
-| GET | `/health` | Liveness and readiness (`modelLoaded` must be true) |
+| GET | `/health` | Liveness and readiness (`modelLoaded` must be true; returns `503` when the model is not loaded) |
 | GET | `/metrics` | Metrics |
 
 ```json
