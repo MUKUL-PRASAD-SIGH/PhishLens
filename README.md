@@ -4,7 +4,7 @@
 
 DevOps project · Course 24CIAEC59 · Team of 3
 
-> Status: planning. Progress is tracked in [docs/TEAM_PLAN.md](docs/TEAM_PLAN.md).
+> Status: planning. Team members: start with [docs/TASKS.md](docs/TASKS.md).
 
 ---
 
@@ -128,6 +128,7 @@ kubectl -n phishlens annotate deploy/scan-api kubernetes.io/change-cause="v2: tr
 
 | Doc | Contents |
 |---|---|
+| [docs/TASKS.md](docs/TASKS.md) | **Start here.** One-page task split per member, with checklists |
 | [docs/SPEC.md](docs/SPEC.md) | System requirements, metrics, API and config contracts (frozen on day 1) |
 | [docs/TEAM_PLAN.md](docs/TEAM_PLAN.md) | Roles, 21-day phase plan, handoffs, integration runbook, demo flow, evidence checklist, working rules, rubric map |
 
