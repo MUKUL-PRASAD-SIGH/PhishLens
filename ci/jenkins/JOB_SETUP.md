@@ -38,3 +38,12 @@ Jenkins only learns about `pollSCM` when it reads the Jenkinsfile, and it only r
 | Package | `scan-api/target/scan-api.jar` |
 | Archive | `scan-api.jar` and `scan-api-<short-sha>-b<build>.jar` under **Build Artifacts**, both fingerprinted |
 | Docker build & push, Trivy scan | Placeholders, skipped until `scan-api/Dockerfile` exists |
+
+## Checking a build from the command line
+
+Jenkins' JSON API answers the same questions as the build page. Use an API token (user menu → **Security** → **API Token**), never the password, and keep it out of the repo. Queries with a `tree=` filter need `curl -g`, otherwise curl reads the `[ ]` as its own glob syntax and sends a broken request:
+
+```bash
+curl -gs -u "$JENKINS_USER:$JENKINS_TOKEN" \
+  'http://localhost:8081/job/phishlens-ci/lastBuild/api/json?tree=displayName,result,artifacts[fileName]'
+```
