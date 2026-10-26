@@ -15,5 +15,6 @@ phishlens:
     suspicious-threshold: 0.40
     risk-threshold: ${RISK_THRESHOLD:0.70}
   app:
-    version: ${APP_VERSION:dev}
+    # @project.version@ is filled in by Maven at build time (pom.xml <version>).
+    version: ${APP_VERSION:@project.version@}
     commit: ${APP_COMMIT:local}
