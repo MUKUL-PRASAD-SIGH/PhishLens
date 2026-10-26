@@ -1,0 +1,49 @@
+# Fast feedback on GitHub for pull requests and pushes to main: the scan-api JUnit suite and
+# the risk-model pytest suite. Jenkins (root Jenkinsfile) remains the pipeline of record and is
+# the only one that packages, archives and (later) builds images; this workflow only tests.
+name: ci
+
+# Pushes to other branches are covered by their pull request, so each change runs once.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# A newer push to the same branch or PR cancels the run still in progress.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan-api:
+    name: scan-api (mvn test)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # Java 17 to match the runtime image (eclipse-temurin:17-jre).
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: scan-api/pom.xml
+      - run: mvn -B -f scan-api/pom.xml test
+
+  risk-model:
+    name: risk-model (pytest)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: risk-model/requirements.txt
+      # Same pytest pin as the Jenkinsfile's PYTEST_VERSION.
+      - run: pip install -r risk-model/requirements.txt pytest==9.1.1
+      - run: python -m pytest risk-model/tests
