@@ -18,6 +18,22 @@ MODEL_URL=http://localhost:8000 $JAVA_HOME/bin/java -jar target/scan-api.jar
 | GET | `/api/scans?limit=20` | JSON array of the same response shape, newest first. `limit` defaults to 20 and is clamped to 1..100 (an out-of-range value is not an error). |
 | GET | `/api/info` | `{"service":"scan-api","version":...,"commit":...}` from `APP_VERSION` / `APP_COMMIT`; defaults are the Maven project version and `local`. |
 
+## Probes and metrics
+
+| Path | Use |
+|---|---|
+| `/actuator/health/liveness` | Liveness probe (`livenessState` only) |
+| `/actuator/health/readiness` | Readiness probe (`readinessState` only). **Does not check `risk-model`**: a model outage is covered by fallback scoring and must not take pods out of service. |
+| `/actuator/prometheus` | Prometheus scrape endpoint |
+
+PhishLens metrics (SPEC §2), alongside the standard `http_server_requests_seconds_*` and JVM metrics:
+
+| Prometheus name | Type | Meaning |
+|---|---|---|
+| `phishlens_scans_total{verdict}` | counter | Scans completed, per verdict (all three start at 0) |
+| `phishlens_model_fallback_total` | counter | Scans scored by `FallbackScorer` because `risk-model` was unavailable |
+| `phishlens_model_latency_seconds_{count,sum,max}{outcome}` | timer | Time spent calling `risk-model`; `outcome` is `success` or `error` (timeouts and failures included) |
+
 ## Behaviour on errors
 
 | Situation | HTTP | Response |

@@ -7,6 +7,27 @@ spring:
   application:
     name: scan-api
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      # Liveness/readiness groups on every host, not only when Spring detects Kubernetes.
+      probes:
+        enabled: true
+      group:
+        # Readiness is deliberately the app's own state only. risk-model is NOT checked:
+        # a model outage is handled by fallback scoring and must not make pods unready.
+        liveness:
+          include: livenessState
+        readiness:
+          include: readinessState
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 phishlens:
   model:
     url: ${MODEL_URL:http://risk-model:8000}
