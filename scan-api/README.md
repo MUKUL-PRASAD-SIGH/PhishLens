@@ -76,6 +76,41 @@ worst case      = 300 + 500 = 800 ms, then fall back
 
 **Minimum value: 301.** With `MODEL_TIMEOUT_MS` of 300 or less there is no read budget left, so scan-api refuses to start and logs `MODEL_TIMEOUT_MS must be at least 301 ...`. This is deliberate fail-fast: in Kubernetes a bad value shows up as `CrashLoopBackOff` rather than as silent fallback on every request.
 
+## Demo v3: broken on purpose
+
+> **Never merge `demo/v3-broken`, and don't "fix" it.** The startup failure below is the point of the branch.
+
+This section exists only on the `demo/v3-broken` branch, which is never merged. It is the bad release for the Kubernetes rollback demo.
+
+v3 makes scan-api require one more environment variable at startup:
+
+| Variable | Default | Used for |
+|---|---|---|
+| `REQUIRED_RELEASE_TOKEN` | none | Must be non-blank or scan-api refuses to start. The value is never checked and is not a secret. |
+
+The ConfigMap does not set it, so the v3 pod exits straight away and Kubernetes reports `CrashLoopBackOff`. `kubectl logs` shows:
+
+```
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Binding to target com.phishlens.scanapi.config.ReleaseProperties failed:
+
+    Property: phishlens.release.requiredToken
+    Value: ""
+    Origin: class path resource [application.yml] from scan-api.jar - 45:21
+    Reason: REQUIRED_RELEASE_TOKEN is not set. This is the deliberately broken v3 build for the rollback demo: it will not start without that variable, and the ConfigMap does not provide it. Roll back to the previous image.
+```
+
+The process exits with status 1.
+
+Readiness never goes `UP`, so the old ReplicaSet keeps serving while the rollout is stuck. The fix in the demo is `kubectl rollout undo`, not setting the variable.
+
+`mvn test` still passes on this branch: `src/test/resources/config/application.properties` sets the variable for tests only, and is not packaged into the jar. `ConfigurationTest.missingReleaseTokenRefusesToStart` checks the failure itself.
+
 ## Fallback scoring
 
 `FallbackScorer` is a port of `risk-model/app/scorer.py::score_v1` (the v1 weights in `V1_WEIGHTS`) using the features from `features.py`. If those weights or features change, update `FallbackScorer` and `UrlFeatureExtractor` to match.

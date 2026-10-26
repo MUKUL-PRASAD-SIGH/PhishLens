@@ -39,3 +39,7 @@ phishlens:
     # @project.version@ is filled in by Maven at build time (pom.xml <version>).
     version: ${APP_VERSION:@project.version@}
     commit: ${APP_COMMIT:local}
+  release:
+    # Demo v3 only (branch demo/v3-broken): blank unless REQUIRED_RELEASE_TOKEN is set, which
+    # makes startup fail on purpose. See README "Demo v3: broken on purpose".
+    required-token: ${REQUIRED_RELEASE_TOKEN:}
