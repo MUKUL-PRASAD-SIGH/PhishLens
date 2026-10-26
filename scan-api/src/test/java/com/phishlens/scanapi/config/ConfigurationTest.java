@@ -46,4 +46,15 @@ class ConfigurationTest {
                 .rootCause()
                 .hasMessageContaining("MODEL_TIMEOUT_MS must be at least 301");
     }
+
+    // Demo v3: the test resources set REQUIRED_RELEASE_TOKEN, so blank it on the command line,
+    // which is what the pod sees when the ConfigMap leaves it out.
+    @Test
+    void missingReleaseTokenRefusesToStart() {
+        SpringApplicationBuilder app = new SpringApplicationBuilder(ScanApiApplication.class)
+                .web(WebApplicationType.NONE);
+        assertThatThrownBy(() -> app.run("--REQUIRED_RELEASE_TOKEN="))
+                .rootCause()
+                .hasMessageContaining("REQUIRED_RELEASE_TOKEN is not set");
+    }
 }
