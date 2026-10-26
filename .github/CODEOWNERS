@@ -1,11 +1,11 @@
-# Replace @m1 @m2 @m3 with the members' GitHub usernames.
-/scan-api/            @m1
-/Jenkinsfile          @m1
-/ci/                  @m1
-/.github/             @m1
-/risk-model/          @m2
-/docker-compose.yml   @m2
+# M3 entries (@m3) are still to be filled in once M3 confirms their GitHub username.
+/scan-api/            @nikitaravindra-ux
+/Jenkinsfile          @nikitaravindra-ux
+/ci/                  @nikitaravindra-ux
+/.github/             @nikitaravindra-ux
+/risk-model/          @MUKUL-PRASAD-SIGH
+/docker-compose.yml   @MUKUL-PRASAD-SIGH
 /ansible/             @m3
 /k8s/                 @m3
 /scripts/             @m3
-/docs/SPEC.md         @m1 @m2 @m3
+/docs/SPEC.md         @nikitaravindra-ux @MUKUL-PRASAD-SIGH @m3

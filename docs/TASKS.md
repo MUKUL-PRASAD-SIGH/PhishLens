@@ -39,8 +39,8 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 ## M1 — Builder (Java API + Jenkins)
 
 **Days 1–2: setup (everyone is waiting on you)**
-- [ ] Create the GitHub repo, protect `main` (PRs required, 1 approval), invite M2, M3 and the course coordinator
-- [ ] Put your teammates' GitHub usernames into `.github/CODEOWNERS` and the repo URL into `repo_link.txt`
+- [~] Create the GitHub repo, protect `main` (PRs required, 1 approval), invite M2, M3 and the course coordinator
+- [~] Put your teammates' GitHub usernames into `.github/CODEOWNERS` and the repo URL into `repo_link.txt`
 - [ ] Create the Spring Boot project in `scan-api/` (Java 17, Maven, Web, Validation, Actuator), `finalName` = `scan-api`
 - [ ] `POST /api/scan` returns a fixed `SAFE`, plus `GET /api/info`. **Merge this: M2 and M3 need it.**
 

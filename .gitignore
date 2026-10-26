@@ -17,3 +17,7 @@ risk-model/data/
 .DS_Store
 # Ansible
 *.retry
+# Local secrets, Jenkins state, logs
+.env
+jenkins_home/
+*.log
