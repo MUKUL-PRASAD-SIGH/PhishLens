@@ -1,0 +1,19 @@
+# Every value below can be overridden by the environment variable named in it
+# (docs/SPEC.md 3.3). In Kubernetes these come from the phishlens-config ConfigMap.
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: scan-api
+
+phishlens:
+  model:
+    url: ${MODEL_URL:http://risk-model:8000}
+    timeout-ms: ${MODEL_TIMEOUT_MS:800}
+  verdict:
+    suspicious-threshold: 0.40
+    risk-threshold: ${RISK_THRESHOLD:0.70}
+  app:
+    version: ${APP_VERSION:dev}
+    commit: ${APP_COMMIT:local}
