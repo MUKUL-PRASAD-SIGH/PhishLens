@@ -18,6 +18,11 @@ pipeline {
 
     environment {
         PYTEST_VERSION = '9.1.1'
+        // Docker Hub namespace for the images. Lowercase on purpose: Docker rejects uppercase in
+        // image names. While it is still 'change-me' the images are built but not pushed.
+        // TODO(M3): replace with the real namespace (SPEC 3.4 says phishlens/, which isn't ours).
+        DOCKER_NAMESPACE = 'change-me'
+        TRIVY_IMAGE = 'aquasec/trivy:0.69.3'
     }
 
     stages {
@@ -80,30 +85,55 @@ pipeline {
             }
         }
 
-        // Placeholder, not implemented yet. Skipped until scan-api/Dockerfile (M2) exists.
-        // TODO(M3): confirm registry + platform. Needs the Docker Hub namespace (SPEC 3.4 says
-        // phishlens/, which isn't ours) and whether the cluster is arm64 or amd64 (buildx if amd64).
-        // Plan: build phishlens/scan-api and phishlens/risk-model tagged ${SHORT_SHA} and
-        // b${BUILD_NUMBER} (never :latest), --build-arg APP_COMMIT=${SHORT_SHA}, push with a
-        // Jenkins credential referenced by ID only.
+        // Skipped until scan-api/Dockerfile (M2) exists. Builds both images tagged ${SHORT_SHA} and
+        // b${BUILD_NUMBER} (never :latest). The push needs a real DOCKER_NAMESPACE and a Jenkins
+        // username/token credential with the ID 'dockerhub'; the credential is referenced by ID only.
+        // TODO(M3): confirm the target platform (arm64 or amd64; buildx if the cluster is amd64).
         stage('Docker build & push') {
             when {
                 expression { fileExists('scan-api/Dockerfile') }
             }
             steps {
-                echo 'Docker build & push: placeholder, waiting on registry namespace and target platform (TODO(M3)).'
+                sh '''
+                    docker build -f scan-api/Dockerfile --build-arg APP_COMMIT="$SHORT_SHA" \
+                        -t "$DOCKER_NAMESPACE/scan-api:$SHORT_SHA" -t "$DOCKER_NAMESPACE/scan-api:b$BUILD_NUMBER" scan-api
+                    docker build -f risk-model/Dockerfile \
+                        -t "$DOCKER_NAMESPACE/risk-model:$SHORT_SHA" -t "$DOCKER_NAMESPACE/risk-model:b$BUILD_NUMBER" risk-model
+                '''
+                script {
+                    if (env.DOCKER_NAMESPACE == 'change-me') {
+                        echo 'DOCKER_NAMESPACE is not set, images built but not pushed.'
+                    } else {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                                usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_TOKEN')]) {
+                            sh '''
+                                echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                                docker push "$DOCKER_NAMESPACE/scan-api:$SHORT_SHA"
+                                docker push "$DOCKER_NAMESPACE/scan-api:b$BUILD_NUMBER"
+                                docker push "$DOCKER_NAMESPACE/risk-model:$SHORT_SHA"
+                                docker push "$DOCKER_NAMESPACE/risk-model:b$BUILD_NUMBER"
+                                docker logout
+                            '''
+                        }
+                    }
+                }
             }
         }
 
-        // Placeholder, not implemented yet. Skipped until scan-api/Dockerfile (M2) exists.
-        // TODO(M3): confirm registry + platform; the scan runs on the images built above.
-        // Plan: trivy image --severity CRITICAL --ignore-unfixed --exit-code 1 on both images.
+        // Skipped until scan-api/Dockerfile (M2) exists. Trivy runs as a container against the host
+        // daemon (the Jenkins image has no Trivy) and fails the build on fixable CRITICAL findings.
         stage('Trivy scan') {
             when {
                 expression { fileExists('scan-api/Dockerfile') }
             }
             steps {
-                echo 'Trivy scan: placeholder, runs once the Docker stage builds real images (TODO(M3)).'
+                sh '''
+                    for img in scan-api risk-model; do
+                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache \
+                            "$TRIVY_IMAGE" image --severity CRITICAL --ignore-unfixed --exit-code 1 \
+                            "$DOCKER_NAMESPACE/$img:$SHORT_SHA"
+                    done
+                '''
             }
         }
     }
