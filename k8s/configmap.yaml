@@ -1,0 +1,15 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: phishlens-config
+  namespace: phishlens
+data:
+  SERVER_PORT: "8080"
+  MODEL_URL: "http://risk-model:8000"
+  RISK_THRESHOLD: "0.70"
+  MODEL_TIMEOUT_MS: "800"
+  APP_VERSION: "dev"
+  APP_COMMIT: "local"
+  PORT: "8000"
+  MODEL_PATH: "/app/model/model.pkl"
+  MODEL_VERSION: "v2"
