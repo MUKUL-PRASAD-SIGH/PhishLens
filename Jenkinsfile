@@ -23,8 +23,9 @@ pipeline {
         // SPEC 3.4 says phishlens/, which isn't ours; the images live under this account instead.
         DOCKER_NAMESPACE = 'nikitaravindra'
         TRIVY_IMAGE = 'aquasec/trivy:0.69.3'
-        // Comma-separated buildx platforms. Switch to 'linux/amd64,linux/arm64' for a multi-arch push.
-        DOCKER_PLATFORMS = 'linux/arm64'
+        // Comma-separated buildx platforms. The first one is built locally and scanned by Trivy, so
+        // keep linux/amd64 (M3's Minikube) first. A single entry gives a single-platform build.
+        DOCKER_PLATFORMS = 'linux/amd64,linux/arm64'
     }
 
     stages {
@@ -87,60 +88,45 @@ pipeline {
             }
         }
 
-        // Skipped until scan-api/Dockerfile (M2) exists. Builds both images tagged ${SHORT_SHA} and
-        // b${BUILD_NUMBER} (never :latest). The push needs a real DOCKER_NAMESPACE and a Jenkins
-        // username/token credential with the ID 'dockerhub'; the credential is referenced by ID only.
-        // Built with buildx for DOCKER_PLATFORMS. --load needs Docker's containerd image store (the
-        // Docker Desktop default); Trivy then scans the variant matching the daemon's architecture.
-        // TODO(M3): confirm the cluster architecture, then set DOCKER_PLATFORMS.
-        stage('Docker build & push') {
+        // Both images are tagged ${SHORT_SHA} and b${BUILD_NUMBER} (never :latest). The stages after the
+        // checkout are skipped until scan-api/Dockerfile (M2) exists.
+        // Build: only the first platform of DOCKER_PLATFORMS, loaded into the local daemon so Trivy can
+        // scan it before anything is published. --load needs Docker's containerd image store (the
+        // Docker Desktop default). The jar is built on the native platform (see scan-api/Dockerfile),
+        // so a foreign-platform build only emulates the small runtime stage.
+        stage('Docker build') {
             when {
                 expression { fileExists('scan-api/Dockerfile') }
             }
             steps {
                 sh '''
-                    docker buildx build --platform "$DOCKER_PLATFORMS" --load \
+                    SCAN_PLATFORM="${DOCKER_PLATFORMS%%,*}"
+                    docker buildx build --platform "$SCAN_PLATFORM" --load \
                         -f scan-api/Dockerfile --build-arg APP_COMMIT="$SHORT_SHA" \
                         -t "$DOCKER_NAMESPACE/scan-api:$SHORT_SHA" -t "$DOCKER_NAMESPACE/scan-api:b$BUILD_NUMBER" scan-api
-                    docker buildx build --platform "$DOCKER_PLATFORMS" --load \
+                    docker buildx build --platform "$SCAN_PLATFORM" --load \
                         -f risk-model/Dockerfile \
                         -t "$DOCKER_NAMESPACE/risk-model:$SHORT_SHA" -t "$DOCKER_NAMESPACE/risk-model:b$BUILD_NUMBER" risk-model
                 '''
-                script {
-                    if (env.DOCKER_NAMESPACE == 'change-me') {
-                        echo 'DOCKER_NAMESPACE is not set, images built but not pushed.'
-                    } else {
-                        withCredentials([usernamePassword(credentialsId: 'dockerhub',
-                                usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_TOKEN')]) {
-                            sh '''
-                                echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
-                                docker push "$DOCKER_NAMESPACE/scan-api:$SHORT_SHA"
-                                docker push "$DOCKER_NAMESPACE/scan-api:b$BUILD_NUMBER"
-                                docker push "$DOCKER_NAMESPACE/risk-model:$SHORT_SHA"
-                                docker push "$DOCKER_NAMESPACE/risk-model:b$BUILD_NUMBER"
-                                docker logout
-                            '''
-                        }
-                    }
-                }
             }
         }
 
-        // Skipped until scan-api/Dockerfile (M2) exists. Trivy runs as a container against the host
-        // daemon (the Jenkins image has no Trivy) and fails the build on fixable CRITICAL findings, apart
-        // from the accepted, expiring entries in ci/trivy/.trivyignore.yaml.
+        // Trivy runs as a container against the host daemon (the Jenkins image has no Trivy), on the
+        // platform that was built above, and fails the build on fixable CRITICAL findings, apart from
+        // the accepted, expiring entries in ci/trivy/.trivyignore.yaml.
         stage('Trivy scan') {
             when {
                 expression { fileExists('scan-api/Dockerfile') }
             }
             steps {
                 sh '''
+                    SCAN_PLATFORM="${DOCKER_PLATFORMS%%,*}"
                     # The ignore file is copied in with docker cp: a bind mount of the workspace would
                     # name a path on the Docker host, not inside this Jenkins container.
                     for img in scan-api risk-model; do
                         cid=$(docker create -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache \
-                            "$TRIVY_IMAGE" image --severity CRITICAL --ignore-unfixed --exit-code 1 \
-                            --ignorefile /trivyignore.yaml "$DOCKER_NAMESPACE/$img:$SHORT_SHA")
+                            "$TRIVY_IMAGE" image --platform "$SCAN_PLATFORM" --severity CRITICAL --ignore-unfixed \
+                            --exit-code 1 --ignorefile /trivyignore.yaml "$DOCKER_NAMESPACE/$img:$SHORT_SHA")
                         docker cp ci/trivy/.trivyignore.yaml "$cid:/trivyignore.yaml"
                         rc=0
                         docker start -a "$cid" || rc=$?
@@ -148,6 +134,48 @@ pipeline {
                         [ "$rc" -eq 0 ] || exit "$rc"
                     done
                 '''
+            }
+        }
+
+        // Push only after the scan passed, and only with a real DOCKER_NAMESPACE and a Jenkins
+        // username/token credential with the ID 'dockerhub' (referenced by ID only). One platform:
+        // push the loaded images. Several: --load cannot hold a multi-platform image, so buildx builds
+        // all platforms again (the layers are cached) and pushes a manifest list straight to the registry.
+        // --provenance=false keeps the manifest list to exactly the requested platforms.
+        stage('Docker push') {
+            when {
+                expression { fileExists('scan-api/Dockerfile') }
+            }
+            steps {
+                script {
+                    if (env.DOCKER_NAMESPACE == 'change-me') {
+                        echo 'DOCKER_NAMESPACE is not set, images built and scanned but not pushed.'
+                    } else {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                                usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_TOKEN')]) {
+                            sh '''
+                                echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                                case "$DOCKER_PLATFORMS" in
+                                    *,*)
+                                        docker buildx build --platform "$DOCKER_PLATFORMS" --provenance=false --push \
+                                            -f scan-api/Dockerfile --build-arg APP_COMMIT="$SHORT_SHA" \
+                                            -t "$DOCKER_NAMESPACE/scan-api:$SHORT_SHA" -t "$DOCKER_NAMESPACE/scan-api:b$BUILD_NUMBER" scan-api
+                                        docker buildx build --platform "$DOCKER_PLATFORMS" --provenance=false --push \
+                                            -f risk-model/Dockerfile \
+                                            -t "$DOCKER_NAMESPACE/risk-model:$SHORT_SHA" -t "$DOCKER_NAMESPACE/risk-model:b$BUILD_NUMBER" risk-model
+                                        ;;
+                                    *)
+                                        docker push "$DOCKER_NAMESPACE/scan-api:$SHORT_SHA"
+                                        docker push "$DOCKER_NAMESPACE/scan-api:b$BUILD_NUMBER"
+                                        docker push "$DOCKER_NAMESPACE/risk-model:$SHORT_SHA"
+                                        docker push "$DOCKER_NAMESPACE/risk-model:b$BUILD_NUMBER"
+                                        ;;
+                                esac
+                                docker logout
+                            '''
+                        }
+                    }
+                }
             }
         }
     }

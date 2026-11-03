@@ -48,13 +48,19 @@ Then create the job: [JOB_SETUP.md](JOB_SETUP.md).
 
 ## buildx
 
-The Jenkinsfile builds images with `docker buildx build --platform "$DOCKER_PLATFORMS"`, so the image needs the buildx plugin; rebuild and recreate the container after pulling this change (`jenkins_home` survives). Checked from inside the container through the mounted socket:
+The Jenkinsfile builds images with `docker buildx build`, so the image needs the buildx plugin; rebuild and recreate the container after pulling a change to this Dockerfile (`jenkins_home` survives). The default builder (the host's `default` instance, through the mounted socket) is enough; no builder instance has to be created.
 
-- The default builder (the host's `default` instance) builds `linux/arm64` and `linux/amd64,linux/arm64` with no builder instance created.
-- `--load` of a multi-platform build works because Docker Desktop uses the containerd image store. On a daemon using the classic store, multi-platform `--load` fails; use `--push`, or create a builder with `docker buildx create --use`.
-- Building a non-native platform runs under emulation (QEMU), so an amd64 build on this Apple Silicon laptop is slower.
+`DOCKER_PLATFORMS` in the Jenkinsfile lists the target platforms, `linux/amd64,linux/arm64` by default (M3's Minikube node is amd64). The pipeline uses it in two ways:
 
-To switch to multi-arch, change `DOCKER_PLATFORMS` in the Jenkinsfile to `linux/amd64,linux/arm64`.
+- **Build and scan: first platform only, `--load`.** The stage builds just the first entry (`linux/amd64`) into the local daemon, and Trivy scans that image with `--platform` set to the same value. Nothing is published before the scan passes. `--load` cannot hold a multi-platform image, which is why only one platform is built here.
+- **Push, several platforms: `--push`.** The push stage runs `docker buildx build --platform linux/amd64,linux/arm64 --provenance=false --push`, so buildx sends a manifest list straight to Docker Hub. The layers come from the build cache. `--provenance=false` keeps the manifest list to exactly the two platforms; otherwise buildx adds `unknown/unknown` attestation entries.
+- **Push, one platform: `docker push`.** With a single entry in `DOCKER_PLATFORMS` the loaded image is pushed as it is, and the same single-platform `--load` build works for local testing.
+
+Notes from checking this:
+
+- `--load` needs Docker's containerd image store (the Docker Desktop default). On a classic-store daemon, create a builder with `docker buildx create --use` for the multi-platform push.
+- The `scan-api` jar is architecture-independent, so `scan-api/Dockerfile` pins its Maven stage to `$BUILDPLATFORM`. Only the small JRE runtime stage is built for a foreign platform, which runs briefly under QEMU. `risk-model`'s `pip install` does run under QEMU on an Apple Silicon laptop when it builds the amd64 image.
+- To try the push path without touching Docker Hub, run `docker run -d -p 5055:5000 registry:2` (port 5000 is taken by macOS AirPlay) and push to `localhost:5055/<name>`, then check `docker buildx imagetools inspect`.
 
 ## Docker socket permissions
 
