@@ -1,5 +1,7 @@
 # Build stage: resolve dependencies first so that layer is cached until pom.xml changes.
-FROM maven:3.9-eclipse-temurin-17 AS build
+# The jar is architecture-independent, so the build always runs on the native builder and never under
+# emulation; only the runtime stage below is built per target platform.
+FROM --platform=$BUILDPLATFORM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /build
 COPY pom.xml .
 RUN mvn -B -q dependency:go-offline
