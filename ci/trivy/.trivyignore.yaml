@@ -1,0 +1,20 @@
+# Accepted Trivy findings for the Jenkins Trivy stage (--ignorefile). Entries expire; review them
+# when they do. Both CVEs are in spring-webmvc 6.2.19, the latest 6.2.x release.
+vulnerabilities:
+  - id: CVE-2026-47884
+    paths:
+      - "app/scan-api.jar/BOOT-INF/lib/spring-webmvc-6.2.19.jar"
+    expired_at: 2026-12-31
+    statement: >-
+      Affected feature: XsltView (path limitation in XSLT view rendering). scan-api does not use it:
+      the only controller is a JSON @RestController, there is no view resolver, template engine or
+      XSLT dependency, and src/main/resources holds only application.yml. The only fixed version is
+      spring-webmvc 7.0.9, which requires Spring Boot 4.
+  - id: CVE-2026-47890
+    paths:
+      - "app/scan-api.jar/BOOT-INF/lib/spring-webmvc-6.2.19.jar"
+    expired_at: 2026-12-31
+    statement: >-
+      Affected feature: Server-Sent Events with view fragments. scan-api does not use it: it returns
+      JSON only and has no SseEmitter, text/event-stream endpoint or view rendering. The only fixed
+      version is spring-webmvc 7.0.9, which requires Spring Boot 4.
