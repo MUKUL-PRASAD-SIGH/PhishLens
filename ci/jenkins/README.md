@@ -56,6 +56,8 @@ The Jenkinsfile builds images with `docker buildx build`, so the image needs the
 - **Push, several platforms: `--push`.** The push stage runs `docker buildx build --platform linux/amd64,linux/arm64 --provenance=false --push`, so buildx sends a manifest list straight to Docker Hub. The layers come from the build cache. `--provenance=false` keeps the manifest list to exactly the two platforms; otherwise buildx adds `unknown/unknown` attestation entries.
 - **Push, one platform: `docker push`.** With a single entry in `DOCKER_PLATFORMS` the loaded image is pushed as it is, and the same single-platform `--load` build works for local testing.
 
+Scan coverage, stated plainly: **only the `linux/amd64` image is scanned.** The push stage rebuilds all platforms with `buildx --push`, so the `linux/arm64` image in the published manifest list is never scanned, and neither published image is guaranteed to be byte-identical to the amd64 image Trivy saw (the build cache should make them the same, but nothing enforces it). That is acceptable here because the cluster is amd64, but it is not a scan of everything that is shipped. Closing the gap would mean scanning the pushed manifest list per platform after the push, or pushing from the already-scanned image.
+
 Notes from checking this:
 
 - `--load` needs Docker's containerd image store (the Docker Desktop default). On a classic-store daemon, create a builder with `docker buildx create --use` for the multi-platform push.
