@@ -127,17 +127,25 @@ pipeline {
         }
 
         // Skipped until scan-api/Dockerfile (M2) exists. Trivy runs as a container against the host
-        // daemon (the Jenkins image has no Trivy) and fails the build on fixable CRITICAL findings.
+        // daemon (the Jenkins image has no Trivy) and fails the build on fixable CRITICAL findings, apart
+        // from the accepted, expiring entries in ci/trivy/.trivyignore.yaml.
         stage('Trivy scan') {
             when {
                 expression { fileExists('scan-api/Dockerfile') }
             }
             steps {
                 sh '''
+                    # The ignore file is copied in with docker cp: a bind mount of the workspace would
+                    # name a path on the Docker host, not inside this Jenkins container.
                     for img in scan-api risk-model; do
-                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache \
+                        cid=$(docker create -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache \
                             "$TRIVY_IMAGE" image --severity CRITICAL --ignore-unfixed --exit-code 1 \
-                            "$DOCKER_NAMESPACE/$img:$SHORT_SHA"
+                            --ignorefile /trivyignore.yaml "$DOCKER_NAMESPACE/$img:$SHORT_SHA")
+                        docker cp ci/trivy/.trivyignore.yaml "$cid:/trivyignore.yaml"
+                        rc=0
+                        docker start -a "$cid" || rc=$?
+                        docker rm "$cid" > /dev/null
+                        [ "$rc" -eq 0 ] || exit "$rc"
                     done
                 '''
             }
