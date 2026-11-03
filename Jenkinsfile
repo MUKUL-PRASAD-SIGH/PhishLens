@@ -19,9 +19,9 @@ pipeline {
     environment {
         PYTEST_VERSION = '9.1.1'
         // Docker Hub namespace for the images. Lowercase on purpose: Docker rejects uppercase in
-        // image names. While it is still 'change-me' the images are built but not pushed.
-        // TODO(M3): replace with the real namespace (SPEC 3.4 says phishlens/, which isn't ours).
-        DOCKER_NAMESPACE = 'change-me'
+        // image names. If it is set back to 'change-me' the images are built but not pushed.
+        // SPEC 3.4 says phishlens/, which isn't ours; the images live under this account instead.
+        DOCKER_NAMESPACE = 'nikitaravindra'
         TRIVY_IMAGE = 'aquasec/trivy:0.69.3'
     }
 
