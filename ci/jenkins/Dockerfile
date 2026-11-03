@@ -1,6 +1,6 @@
 # PhishLens Jenkins controller: Jenkins LTS (JDK 21) plus the tools the Jenkinsfile runs:
 # Maven 3.9 for scan-api, Python 3.12 with venv for the risk-model tests, and the Docker CLI
-# with the compose plugin, talking to the host daemon through the mounted docker.sock.
+# with the compose and buildx plugins, talking to the host daemon through the mounted docker.sock.
 # Build and run instructions: ci/jenkins/README.md.
 
 # Python 3.12 (SPEC 1.3) from the official image. Debian trixie itself ships only 3.13;
@@ -15,6 +15,7 @@ ARG MAVEN_SHA512=831a8591fe20c8243b1dbe7d71e3244f31d1665b0804b2e825e38cbbe5ce0ca
 # Docker's apt repository for Debian 13 (trixie), which this Jenkins image is based on.
 ARG DOCKER_CLI_VERSION=5:29.9.2-1~debian.13~trixie
 ARG COMPOSE_PLUGIN_VERSION=5.6.1-1~debian.13~trixie
+ARG BUILDX_PLUGIN_VERSION=0.38.1-1~debian.13~trixie
 ARG DOCKER_GPG_FINGERPRINT=9DC858229FC7DD38854AE2D88D81803C0EBFCD88
 
 USER root
@@ -46,7 +47,8 @@ RUN set -eux; \
         > /etc/apt/sources.list.d/docker.list; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-        "docker-ce-cli=${DOCKER_CLI_VERSION}" "docker-compose-plugin=${COMPOSE_PLUGIN_VERSION}"; \
+        "docker-ce-cli=${DOCKER_CLI_VERSION}" "docker-compose-plugin=${COMPOSE_PLUGIN_VERSION}" \
+        "docker-buildx-plugin=${BUILDX_PLUGIN_VERSION}"; \
     rm -rf /var/lib/apt/lists/*
 
 USER jenkins

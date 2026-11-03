@@ -6,7 +6,7 @@ A Jenkins controller in Docker that runs the root [`Jenkinsfile`](../../Jenkinsf
 |---|---|---|
 | Maven | 3.9.16 | Apache archive, SHA-512 checked during the build (Debian's package is 3.8.x, below SPEC's 3.9+) |
 | Python | 3.12.14 with `venv` | Copied from the official `python:3.12.14-slim-trixie` image (SPEC 1.3 pins 3.12; Debian 13 itself only ships 3.13) |
-| Docker CLI + compose plugin | 29.9.2 / 5.6.1 | Docker's apt repository, signing key fingerprint checked |
+| Docker CLI + compose and buildx plugins | 29.9.2 / 5.6.1 / 0.38.1 | Docker's apt repository, signing key fingerprint checked |
 
 Jenkins runs builds on its own JDK 21. scan-api still compiles to Java 17 class files, because `pom.xml` sets `<java.version>17</java.version>` and Maven passes `--release 17`.
 
@@ -45,6 +45,16 @@ Open <http://localhost:8081>, paste the password, then:
 3. Go to **Manage Jenkins → Plugins → Available plugins**, install **Docker Pipeline** and restart.
 
 Then create the job: [JOB_SETUP.md](JOB_SETUP.md).
+
+## buildx
+
+The Jenkinsfile builds images with `docker buildx build --platform "$DOCKER_PLATFORMS"`, so the image needs the buildx plugin; rebuild and recreate the container after pulling this change (`jenkins_home` survives). Checked from inside the container through the mounted socket:
+
+- The default builder (the host's `default` instance) builds `linux/arm64` and `linux/amd64,linux/arm64` with no builder instance created.
+- `--load` of a multi-platform build works because Docker Desktop uses the containerd image store. On a daemon using the classic store, multi-platform `--load` fails; use `--push`, or create a builder with `docker buildx create --use`.
+- Building a non-native platform runs under emulation (QEMU), so an amd64 build on this Apple Silicon laptop is slower.
+
+To switch to multi-arch, change `DOCKER_PLATFORMS` in the Jenkinsfile to `linux/amd64,linux/arm64`.
 
 ## Docker socket permissions
 

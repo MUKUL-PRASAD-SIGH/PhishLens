@@ -23,6 +23,8 @@ pipeline {
         // SPEC 3.4 says phishlens/, which isn't ours; the images live under this account instead.
         DOCKER_NAMESPACE = 'nikitaravindra'
         TRIVY_IMAGE = 'aquasec/trivy:0.69.3'
+        // Comma-separated buildx platforms. Switch to 'linux/amd64,linux/arm64' for a multi-arch push.
+        DOCKER_PLATFORMS = 'linux/arm64'
     }
 
     stages {
@@ -88,16 +90,20 @@ pipeline {
         // Skipped until scan-api/Dockerfile (M2) exists. Builds both images tagged ${SHORT_SHA} and
         // b${BUILD_NUMBER} (never :latest). The push needs a real DOCKER_NAMESPACE and a Jenkins
         // username/token credential with the ID 'dockerhub'; the credential is referenced by ID only.
-        // TODO(M3): confirm the target platform (arm64 or amd64; buildx if the cluster is amd64).
+        // Built with buildx for DOCKER_PLATFORMS. --load needs Docker's containerd image store (the
+        // Docker Desktop default); Trivy then scans the variant matching the daemon's architecture.
+        // TODO(M3): confirm the cluster architecture, then set DOCKER_PLATFORMS.
         stage('Docker build & push') {
             when {
                 expression { fileExists('scan-api/Dockerfile') }
             }
             steps {
                 sh '''
-                    docker build -f scan-api/Dockerfile --build-arg APP_COMMIT="$SHORT_SHA" \
+                    docker buildx build --platform "$DOCKER_PLATFORMS" --load \
+                        -f scan-api/Dockerfile --build-arg APP_COMMIT="$SHORT_SHA" \
                         -t "$DOCKER_NAMESPACE/scan-api:$SHORT_SHA" -t "$DOCKER_NAMESPACE/scan-api:b$BUILD_NUMBER" scan-api
-                    docker build -f risk-model/Dockerfile \
+                    docker buildx build --platform "$DOCKER_PLATFORMS" --load \
+                        -f risk-model/Dockerfile \
                         -t "$DOCKER_NAMESPACE/risk-model:$SHORT_SHA" -t "$DOCKER_NAMESPACE/risk-model:b$BUILD_NUMBER" risk-model
                 '''
                 script {
