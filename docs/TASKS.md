@@ -2,7 +2,7 @@
 
 Find your name, read only your section, tick the boxes as you go. Details and reasons live in [TEAM_PLAN.md](TEAM_PLAN.md); API and config rules live in [SPEC.md](SPEC.md).
 
-**Progress:** `risk-model` code, tests, v1 heuristic, v2 model and model card are done (M2). `[x]` = done, `[~]` = written but not yet verified. Next up: `scan-api` (M1).
+**Progress:** `risk-model` code, tests, v1 heuristic, v2 model and model card are done (M2). `scan-api`, the Jenkins pipeline and the GitHub Actions workflow are done and on `main` (M1). `[x]` = done, `[~]` = written but not yet verified. Next up: the `scan-api` Dockerfile and `docker-compose.yml` (M2), then Docker build/push and Trivy (M1) and the Kubernetes manifests (M3).
 
 ## The split at a glance
 
@@ -39,30 +39,30 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 ## M1 — Builder (Java API + Jenkins)
 
 **Days 1–2: setup (everyone is waiting on you)**
-- [~] Create the GitHub repo, protect `main` (PRs required, 1 approval), invite M2, M3 and the course coordinator
-- [~] Put your teammates' GitHub usernames into `.github/CODEOWNERS` and the repo URL into `repo_link.txt`
-- [ ] Create the Spring Boot project in `scan-api/` (Java 17, Maven, Web, Validation, Actuator), `finalName` = `scan-api`
-- [ ] `POST /api/scan` returns a fixed `SAFE`, plus `GET /api/info`. **Merge this: M2 and M3 need it.**
+- [~] Create the GitHub repo, protect `main` (PRs required, 1 approval), invite M2, M3 and the course coordinator *(Repo and PR workflow are in place; branch protection could not be confirmed, and the course coordinator is not yet a collaborator.)*
+- [~] Put your teammates' GitHub usernames into `.github/CODEOWNERS` and the repo URL into `repo_link.txt` *(Repo URL, M1 and M2 are in; M3's username is in PR #11.)*
+- [x] Create the Spring Boot project in `scan-api/` (Java 17, Maven, Web, Validation, Actuator), `finalName` = `scan-api`
+- [x] `POST /api/scan` returns a fixed `SAFE`, plus `GET /api/info`. **Merge this: M2 and M3 need it.**
 
 **Days 3–8: the real API and Jenkins**
-- [ ] Verdict rules, scan history (last 100), model client with timeout, fallback scoring (use M2's v1 weights, Day 5)
-- [ ] Metrics and health probes in `application.yml`; tell M3 the probe paths (Day 6)
-- [ ] JUnit tests: thresholds 0.39 / 0.40 / 0.69 / 0.70, controller 200 and 400, fallback when model is down
-- [ ] Jenkins in Docker (`ci/jenkins/Dockerfile`)
-- [ ] `Jenkinsfile`: Checkout → Test → Package → Archive, polling every minute; run it once by hand, then push and watch it start itself
-- [ ] Add a Python test stage for M2's pytest suite (Day 7)
-- [ ] Tag the JAR and build name with the commit SHA
+- [x] Verdict rules, scan history (last 100), model client with timeout, fallback scoring (use M2's v1 weights, Day 5)
+- [x] Metrics and health probes in `application.yml`; tell M3 the probe paths (Day 6) *(M3's manifests use these paths.)*
+- [x] JUnit tests: thresholds 0.39 / 0.40 / 0.69 / 0.70, controller 200 and 400, fallback when model is down *(95 tests.)*
+- [x] Jenkins in Docker (`ci/jenkins/Dockerfile`)
+- [x] `Jenkinsfile`: Checkout → Test → Package → Archive, polling every minute; run it once by hand, then push and watch it start itself *(Build #2 started itself from a push; the job now builds `main`.)*
+- [x] Add a Python test stage for M2's pytest suite (Day 7) *(13 pytest tests; 108 with the JUnit tests.)*
+- [x] Tag the JAR and build name with the commit SHA
 
 **Days 9–11: integration (on M3's laptop)**
-- [ ] Add Docker build and push stages (Docker Hub); agree image names and tags with M3 by Day 8
+- [~] Add Docker build and push stages (Docker Hub); agree image names and tags with M3 by Day 8 *(The stages are in PR #12 and skip until `scan-api/Dockerfile` exists; the Docker Hub namespace is still to be set.)*
 - [ ] Push a commit and show Jenkins building and pushing the images
 
 **Days 12–16: extras**
-- [ ] Trivy scan stage; optional GitHub Actions workflow
-- [ ] Build the deliberately broken **v3** image on branch `demo/v3-broken` (never merge it) and give M3 the tag by Day 14
+- [~] Trivy scan stage; optional GitHub Actions workflow *(The workflow is done and green on `main`. The Trivy stage is in PR #12 and has not yet run against a real image.)*
+- [~] Build the deliberately broken **v3** image on branch `demo/v3-broken` (never merge it) and give M3 the tag by Day 14 *(The branch is rebased onto `main` with 96 tests passing; the image can't be built until `scan-api/Dockerfile` exists.)*
 
 **Days 17–21: wrap-up**
-- [ ] Screenshots: git graph with a merge, Jenkins config, auto-triggered build, SHA-named artifact, test results
+- [~] Screenshots: git graph with a merge, Jenkins config, auto-triggered build, SHA-named artifact, test results *(Most shots are in `docs/report/screenshots/component1/`; the git graph and the SCM-triggered build on `main` are still to take.)*
 - [ ] Write and compile the Component 1 report; rehearse your 4-minute demo part
 
 ---
