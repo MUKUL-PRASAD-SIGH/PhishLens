@@ -2,7 +2,7 @@
 
 Find your name, read only your section, tick the boxes as you go. Details and reasons live in [TEAM_PLAN.md](TEAM_PLAN.md); API and config rules live in [SPEC.md](SPEC.md).
 
-**Progress:** `risk-model` code, tests, v1 heuristic, v2 model and model card are done (M2). `scan-api`, the Jenkins pipeline and the GitHub Actions workflow are done and on `main` (M1). `[x]` = done, `[~]` = written but not yet verified. Next up: the `scan-api` Dockerfile and `docker-compose.yml` (M2), then Docker build/push and Trivy (M1) and the Kubernetes manifests (M3).
+**Progress (2026-11-05):** All open PRs (#11–#17) are merged and `main` holds every branch except `demo/v3-broken` (kept unmerged on purpose). Done: `scan-api`, Jenkins, GitHub Actions, Docker/Trivy pipeline stages, both Dockerfiles, `risk-model` v1/v2, and the first K8s manifests and `demo-scale` scripts. Still open: Docker Hub namespace and a real image push, `docker-compose.yml`, the Ansible role, K8s namespace/HPA manifests, the demo scripts, the v3 image, and all screenshots and reports. `[x]` = done, `[~]` = written but not yet verified.
 
 ## The split at a glance
 
@@ -40,7 +40,7 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 
 **Days 1–2: setup (everyone is waiting on you)**
 - [~] Create the GitHub repo, protect `main` (PRs required, 1 approval), invite M2, M3 and the course coordinator *(Repo and PR workflow are in place; branch protection could not be confirmed, and the course coordinator is not yet a collaborator.)*
-- [~] Put your teammates' GitHub usernames into `.github/CODEOWNERS` and the repo URL into `repo_link.txt` *(Repo URL, M1 and M2 are in; M3's username is in PR #11.)*
+- [~] Put your teammates' GitHub usernames into `.github/CODEOWNERS` and the repo URL into `repo_link.txt` *(Repo URL, M1 and M2 are in; M3's username is in `CODEOWNERS` via PR #11.)*
 - [x] Create the Spring Boot project in `scan-api/` (Java 17, Maven, Web, Validation, Actuator), `finalName` = `scan-api`
 - [x] `POST /api/scan` returns a fixed `SAFE`, plus `GET /api/info`. **Merge this: M2 and M3 need it.**
 
@@ -54,12 +54,12 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 - [x] Tag the JAR and build name with the commit SHA
 
 **Days 9–11: integration (on M3's laptop)**
-- [~] Add Docker build and push stages (Docker Hub); agree image names and tags with M3 by Day 8 *(The stages are in PR #12 and skip until `scan-api/Dockerfile` exists; the Docker Hub namespace is still to be set.)*
+- [~] Add Docker build and push stages (Docker Hub); agree image names and tags with M3 by Day 8 *(The stages are on `main` (PR #12); the Dockerfile now exists, so they will run once the Docker Hub namespace and credentials are set.)*
 - [ ] Push a commit and show Jenkins building and pushing the images
 
 **Days 12–16: extras**
-- [~] Trivy scan stage; optional GitHub Actions workflow *(The workflow is done and green on `main`. The Trivy stage is in PR #12 and has not yet run against a real image.)*
-- [~] Build the deliberately broken **v3** image on branch `demo/v3-broken` (never merge it) and give M3 the tag by Day 14 *(The branch is rebased onto `main` with 96 tests passing; the image can't be built until `scan-api/Dockerfile` exists.)*
+- [~] Trivy scan stage; optional GitHub Actions workflow *(The workflow is done and green on `main`. The Trivy stage is on `main` (PR #12, with CVE fixes in #16) and has not yet run against a real image.)*
+- [~] Build the deliberately broken **v3** image on branch `demo/v3-broken` (never merge it) and give M3 the tag by Day 14 *(The branch is rebased onto `main` with 96 tests passing; the image can now be built from `scan-api/Dockerfile` but has not been yet.)*
 
 **Days 17–21: wrap-up**
 - [~] Screenshots: git graph with a merge, Jenkins config, auto-triggered build, SHA-named artifact, test results *(Most shots are in `docs/report/screenshots/component1/`; the git graph and the SCM-triggered build on `main` are still to take.)*
@@ -78,7 +78,7 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 - [x] v1 heuristic score (weighted sum, 0–1). **Send the weights to M1 by Day 5.** *(Weights: `V1_WEIGHTS` in `risk-model/app/scorer.py`. Still to send to M1.)*
 - [x] pytest suite: feature tests and API tests (200, 422, `/health`)
 - [~] `risk-model/Dockerfile` (`python:3.12-slim`, non-root) and `.dockerignore` *(Written, image build not yet verified; Docker was not running.)*
-- [ ] `scan-api/Dockerfile` as a **multi-stage** build (Maven build stage, JRE runtime stage, non-root); also build a single-stage one and note both image sizes
+- [~] `scan-api/Dockerfile` as a **multi-stage** build (Maven build stage, JRE runtime stage, non-root); also build a single-stage one and note both image sizes *(Both Dockerfiles are on `main`; image sizes not yet recorded. `docker-compose.yml` is still missing.)*
 - [ ] `docker-compose.yml`: `docker compose up --build`, then curl on port 8080 must show `source: model`
 - [x] `/metrics` endpoint and the `phishlens_predictions_total` counter
 
@@ -107,10 +107,10 @@ You wait on others the most early on, so use stand-ins (any Spring Boot JAR, an 
 **Days 3–8: Ansible and manifests**
 - [ ] Ansible role `scan_api`: variables, install Java, create user, copy JAR, systemd template, handler `restart phishlens`
 - [ ] Run the playbook twice: first run changes things, **second run shows `changed=0`**
-- [ ] K8s manifests in `k8s/`: ConfigMap, `risk-model` (2 pods, ClusterIP), `scan-api` (3 pods, NodePort), resource limits from SPEC §1.4
-- [ ] Probes: startup, liveness and readiness for `scan-api` (paths from M1, Day 6); `/health` for `risk-model`
+- [~] K8s manifests in `k8s/`: ConfigMap, `risk-model` (2 pods, ClusterIP), `scan-api` (3 pods, NodePort), resource limits from SPEC §1.4 *(ConfigMap, risk-model and scan-api are on `main`; the namespace manifest is not yet there and nothing has been applied to a cluster.)*
+- [~] Probes: startup, liveness and readiness for `scan-api` (paths from M1, Day 6); `/health` for `risk-model`
 - [ ] When M2's Dockerfiles land (Day 7), build the images, `minikube image load`, replace the stand-in; curl through the NodePort must show `source: model`
-- [ ] `scripts/demo-scale.sh`: 3 → 5 → 2 pods
+- [~] `scripts/demo-scale.sh`: 3 → 5 → 2 pods *(`.sh` and `.ps1` are on `main`; not yet run against a cluster.)*
 
 **Days 9–11: integration (host it on your laptop)**
 - [ ] Have Minikube running and the repo pulled by Day 9; switch manifests to the Docker Hub images; follow the runbook in TEAM_PLAN
