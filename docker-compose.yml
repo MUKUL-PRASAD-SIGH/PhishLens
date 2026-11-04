@@ -1,0 +1,25 @@
+services:
+  risk-model:
+    build: ./risk-model
+    environment:
+      MODEL_VERSION: v2
+    ports:
+      - "${RISK_MODEL_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  scan-api:
+    build:
+      context: ./scan-api
+      args:
+        APP_COMMIT: ${APP_COMMIT:-local}
+    environment:
+      MODEL_URL: http://risk-model:8000
+    ports:
+      - "8080:8080"
+    depends_on:
+      risk-model:
+        condition: service_healthy

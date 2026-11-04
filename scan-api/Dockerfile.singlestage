@@ -1,0 +1,11 @@
+# Exists only for the image-size comparison in M2's report section.
+# The real image is scan-api/Dockerfile (multi-stage). Do not deploy this one.
+FROM maven:3.9-eclipse-temurin-17
+ARG APP_COMMIT=local
+ENV APP_COMMIT=${APP_COMMIT}
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn -B -q -DskipTests package
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/target/scan-api.jar"]
