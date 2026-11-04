@@ -6,7 +6,7 @@ A Jenkins controller in Docker that runs the root [`Jenkinsfile`](../../Jenkinsf
 |---|---|---|
 | Maven | 3.9.16 | Apache archive, SHA-512 checked during the build (Debian's package is 3.8.x, below SPEC's 3.9+) |
 | Python | 3.12.14 with `venv` | Copied from the official `python:3.12.14-slim-trixie` image (SPEC 1.3 pins 3.12; Debian 13 itself only ships 3.13) |
-| Docker CLI + compose plugin | 29.9.2 / 5.6.1 | Docker's apt repository, signing key fingerprint checked |
+| Docker CLI + compose and buildx plugins | 29.9.2 / 5.6.1 / 0.38.1 | Docker's apt repository, signing key fingerprint checked |
 
 Jenkins runs builds on its own JDK 21. scan-api still compiles to Java 17 class files, because `pom.xml` sets `<java.version>17</java.version>` and Maven passes `--release 17`.
 
@@ -45,6 +45,24 @@ Open <http://localhost:8081>, paste the password, then:
 3. Go to **Manage Jenkins → Plugins → Available plugins**, install **Docker Pipeline** and restart.
 
 Then create the job: [JOB_SETUP.md](JOB_SETUP.md).
+
+## buildx
+
+The Jenkinsfile builds images with `docker buildx build`, so the image needs the buildx plugin; rebuild and recreate the container after pulling a change to this Dockerfile (`jenkins_home` survives). The default builder (the host's `default` instance, through the mounted socket) is enough; no builder instance has to be created.
+
+`DOCKER_PLATFORMS` in the Jenkinsfile lists the target platforms, `linux/amd64,linux/arm64` by default (M3's Minikube node is amd64). The pipeline uses it in two ways:
+
+- **Build and scan: first platform only, `--load`.** The stage builds just the first entry (`linux/amd64`) into the local daemon, and Trivy scans that image with `--platform` set to the same value. Nothing is published before the scan passes. `--load` cannot hold a multi-platform image, which is why only one platform is built here.
+- **Push, several platforms: `--push`.** The push stage runs `docker buildx build --platform linux/amd64,linux/arm64 --provenance=false --push`, so buildx sends a manifest list straight to Docker Hub. The layers come from the build cache. `--provenance=false` keeps the manifest list to exactly the two platforms; otherwise buildx adds `unknown/unknown` attestation entries.
+- **Push, one platform: `docker push`.** With a single entry in `DOCKER_PLATFORMS` the loaded image is pushed as it is, and the same single-platform `--load` build works for local testing.
+
+Scan coverage, stated plainly: **only the `linux/amd64` image is scanned.** The push stage rebuilds all platforms with `buildx --push`, so the `linux/arm64` image in the published manifest list is never scanned, and neither published image is guaranteed to be byte-identical to the amd64 image Trivy saw (the build cache should make them the same, but nothing enforces it). That is acceptable here because the cluster is amd64, but it is not a scan of everything that is shipped. Closing the gap would mean scanning the pushed manifest list per platform after the push, or pushing from the already-scanned image.
+
+Notes from checking this:
+
+- `--load` needs Docker's containerd image store (the Docker Desktop default). On a classic-store daemon, create a builder with `docker buildx create --use` for the multi-platform push.
+- The `scan-api` jar is architecture-independent, so `scan-api/Dockerfile` pins its Maven stage to `$BUILDPLATFORM`. Only the small JRE runtime stage is built for a foreign platform, which runs briefly under QEMU. `risk-model`'s `pip install` does run under QEMU on an Apple Silicon laptop when it builds the amd64 image.
+- To try the push path without touching Docker Hub, run `docker run -d -p 5055:5000 registry:2` (port 5000 is taken by macOS AirPlay) and push to `localhost:5055/<name>`, then check `docker buildx imagetools inspect`.
 
 ## Docker socket permissions
 

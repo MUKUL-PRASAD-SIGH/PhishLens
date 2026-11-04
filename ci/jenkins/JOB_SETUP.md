@@ -37,7 +37,9 @@ Jenkins only learns about `pollSCM` when it reads the Jenkinsfile, and it only r
 | Model tests | pytest results for risk-model, in the same Test Result view. Skipped if `risk-model/tests` doesn't exist. |
 | Package | `scan-api/target/scan-api.jar` |
 | Archive | `scan-api.jar` and `scan-api-<short-sha>-b<build>.jar` under **Build Artifacts**, both fingerprinted |
-| Docker build & push, Trivy scan | Placeholders, skipped until `scan-api/Dockerfile` exists |
+| Docker build | Skipped until `scan-api/Dockerfile` exists. Builds `scan-api` and `risk-model` for the first platform in `DOCKER_PLATFORMS` (`linux/amd64`) into the local daemon, tagged `<short-sha>` and `b<build>`. |
+| Trivy scan | Skipped until `scan-api/Dockerfile` exists. Runs Trivy (as a container) on that platform's images and fails on fixable CRITICAL findings, apart from the accepted entries in `ci/trivy/.trivyignore.yaml`. |
+| Docker push | Skipped until `scan-api/Dockerfile` exists. Runs after the scan passes, and only once `DOCKER_NAMESPACE` is a real Docker Hub namespace and a Jenkins username/token credential with ID `dockerhub` exists. Pushes one manifest list per tag covering every platform in `DOCKER_PLATFORMS` (`linux/amd64,linux/arm64`). |
 
 ## Checking a build from the command line
 
