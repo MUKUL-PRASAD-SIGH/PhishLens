@@ -75,7 +75,7 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 
 **Days 3–8: the model and containers (your Day 7 handoff unblocks both teammates)**
 - [x] `features.py`: URL length, digits, special characters, `@`, IP host, subdomains, suspicious TLD, HTTPS, entropy
-- [x] v1 heuristic score (weighted sum, 0–1). **Send the weights to M1 by Day 5.** *(Weights: `V1_WEIGHTS` in `risk-model/app/scorer.py`. Still to send to M1.)*
+- [x] v1 heuristic score (weighted sum, 0–1). **Send the weights to M1 by Day 5.** *(Weights: `V1_WEIGHTS` in `risk-model/app/scorer.py`. scan-api `FallbackScorer` already uses the same weights, so this handoff is done.)*
 - [x] pytest suite: feature tests and API tests (200, 422, `/health`)
 - [~] `risk-model/Dockerfile` (`python:3.12-slim`, non-root) and `.dockerignore` *(Written, image build not yet verified; Docker was not running.)*
 - [~] `scan-api/Dockerfile` as a **multi-stage** build (Maven build stage, JRE runtime stage, non-root); also build a single-stage one and note both image sizes *(Both Dockerfiles are on `main`; image sizes not yet recorded. `docker-compose.yml` is still missing.)*
@@ -88,7 +88,7 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 **Days 12–16: extras**
 - [x] `train.py` → `model.pkl` (v2), pin the scikit-learn version, write `MODEL_CARD.md` with v1 vs v2 accuracy, precision, recall. *(v2 trained on synthetic data.)* **Give M3 the v2 image tag by Day 14.**
 - [ ] Update base images if Trivy flags fixable CRITICAL issues
-- [ ] Write the Prometheus explanation (sample scrape config and what each metric means)
+- [x] Write the Prometheus explanation (sample scrape config and what each metric means) *(See `docs/PROMETHEUS.md`.)*
 
 **Days 17–21: wrap-up**
 - [ ] Screenshots: Dockerfiles and build, `docker images` size comparison, compose curl, model card, metrics output
