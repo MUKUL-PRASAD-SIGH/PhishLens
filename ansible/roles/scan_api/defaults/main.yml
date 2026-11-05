@@ -1,0 +1,25 @@
+
+---
+# Application identity
+app_name: phishlens
+app_user: phishlens
+app_group: phishlens
+
+# Installation paths
+app_dir: /opt/phishlens
+app_jar: scan-api.jar
+
+# Application configuration
+app_port: 8080
+model_url: "http://localhost:8000"
+risk_threshold: "0.70"
+model_timeout_ms: "800"
+
+# JAR location on the Ansible controller
+jar_src: "{{ playbook_dir }}/../scan-api/target/scan-api.jar"
+
+# Java runtime
+java_package: openjdk-17-jre-headless
+
+# systemd
+service_name: phishlens

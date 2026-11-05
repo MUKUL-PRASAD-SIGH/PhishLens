@@ -1,0 +1,7 @@
+---
+- name: Deploy PhishLens Scan API
+  hosts: scan_servers
+  become: true
+
+  roles:
+    - scan_api

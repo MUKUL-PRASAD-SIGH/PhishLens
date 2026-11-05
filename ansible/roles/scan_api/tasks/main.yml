@@ -1,0 +1,72 @@
+---
+- name: Update apt package index
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install Java 17 runtime
+  ansible.builtin.apt:
+    name: "{{ java_package }}"
+    state: present
+
+- name: Create application group
+  ansible.builtin.group:
+    name: "{{ app_group }}"
+    state: present
+
+- name: Create application user
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    group: "{{ app_group }}"
+    system: true
+    shell: /usr/sbin/nologin
+    home: "{{ app_dir }}"
+    create_home: false
+    state: present
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ app_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0755"
+
+- name: Check whether the application JAR exists
+  ansible.builtin.stat:
+    path: "{{ jar_src }}"
+  delegate_to: localhost
+  become: false
+  register: jar_file
+
+- name: Stop if application JAR is missing
+  ansible.builtin.assert:
+    that:
+      - jar_file.stat.exists
+      - jar_file.stat.isreg
+    fail_msg: "Application JAR not found at {{ jar_src }}. Build scan-api first."
+
+- name: Copy application JAR
+  ansible.builtin.copy:
+    src: "{{ jar_src }}"
+    dest: "{{ app_dir }}/{{ app_jar }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0644"
+  notify: Restart phishlens
+
+- name: Install systemd service
+  ansible.builtin.template:
+    src: phishlens.service.j2
+    dest: /etc/systemd/system/{{ service_name }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart phishlens
+
+- name: Enable and start PhishLens service
+  ansible.builtin.systemd:
+    name: "{{ service_name }}"
+    enabled: true
+    state: started
+    daemon_reload: true
