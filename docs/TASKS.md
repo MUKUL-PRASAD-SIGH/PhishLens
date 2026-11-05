@@ -2,7 +2,7 @@
 
 Find your name, read only your section, tick the boxes as you go. Details and reasons live in [TEAM_PLAN.md](TEAM_PLAN.md); API and config rules live in [SPEC.md](SPEC.md).
 
-**Progress (2026-11-05):** All open PRs (#11–#17) are merged and `main` holds every branch except `demo/v3-broken` (kept unmerged on purpose). Done: `scan-api`, Jenkins, GitHub Actions, Docker/Trivy pipeline stages, both Dockerfiles, `risk-model` v1/v2, and the first K8s manifests and `demo-scale` scripts. Still open: Docker Hub namespace and a real image push, `docker-compose.yml`, the Ansible role, K8s namespace/HPA manifests, the demo scripts, the v3 image, and all screenshots and reports. `[x]` = done, `[~]` = written but not yet verified.
+**Progress (2026-11-05):** All PRs (#11–#19) are merged; `main` holds every branch except `demo/v3-broken` (kept unmerged on purpose). Done: `scan-api`, Jenkins, GitHub Actions, Docker build/push and Trivy stages (Docker Hub screenshots for both images are in), both Dockerfiles, `risk-model` v1/v2, and the first K8s manifests and `demo-scale` scripts. Still open: `docker-compose.yml`, the v3 image, the Ansible role, K8s namespace/HPA manifests, the rest of M3's scripts and demos, and the reports. `[x]` = done, `[~]` = written but not yet verified.
 
 ## The split at a glance
 
@@ -54,15 +54,15 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 - [x] Tag the JAR and build name with the commit SHA
 
 **Days 9–11: integration (on M3's laptop)**
-- [~] Add Docker build and push stages (Docker Hub); agree image names and tags with M3 by Day 8 *(The stages are on `main` (PR #12); the Dockerfile now exists, so they will run once the Docker Hub namespace and credentials are set.)*
-- [ ] Push a commit and show Jenkins building and pushing the images
+- [x] Add Docker build and push stages (Docker Hub); agree image names and tags with M3 by Day 8 *(Stages are on `main`; Docker Hub shows both `scan-api` and `risk-model`, screenshots 29–30.)*
+- [x] Push a commit and show Jenkins building and pushing the images *(Screenshots 27–28, 33.)*
 
 **Days 12–16: extras**
-- [~] Trivy scan stage; optional GitHub Actions workflow *(The workflow is done and green on `main`. The Trivy stage is on `main` (PR #12, with CVE fixes in #16) and has not yet run against a real image.)*
+- [x] Trivy scan stage; optional GitHub Actions workflow *(Workflow green on `main`; Trivy ran, with before/after shots 26 and 34 and CVE fixes in #16.)*
 - [~] Build the deliberately broken **v3** image on branch `demo/v3-broken` (never merge it) and give M3 the tag by Day 14 *(The branch is rebased onto `main` with 96 tests passing; the image can now be built from `scan-api/Dockerfile` but has not been yet.)*
 
 **Days 17–21: wrap-up**
-- [~] Screenshots: git graph with a merge, Jenkins config, auto-triggered build, SHA-named artifact, test results *(Most shots are in `docs/report/screenshots/component1/`; the git graph and the SCM-triggered build on `main` are still to take.)*
+- [~] Screenshots: git graph with a merge, Jenkins config, auto-triggered build, SHA-named artifact, test results *(All now in `docs/report/screenshots/component1/` (shots 14–34); only the report write-up remains.)*
 - [ ] Write and compile the Component 1 report; rehearse your 4-minute demo part
 
 ---
