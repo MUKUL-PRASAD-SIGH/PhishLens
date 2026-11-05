@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
 $Namespace = "phishlens"
 $Deployment = "scan-api"
@@ -20,8 +20,10 @@ function Set-ReplicaCount {
 
 Write-Host "Starting PhishLens scaling demo"
 
+Write-Host "Ensure HPA is temporarily removed before manual scaling."
+
 Set-ReplicaCount 3
-Set-ReplicaCount 5
-Set-ReplicaCount 2
+Set-ReplicaCount 4
+Set-ReplicaCount 3
 
 Write-Host "`nScaling demo completed successfully." -ForegroundColor Green

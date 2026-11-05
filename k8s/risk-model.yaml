@@ -1,4 +1,4 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: risk-model
@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: risk-model
-          image: phishlens/risk-model:dev
-          imagePullPolicy: IfNotPresent
+          image: nikitaravindra/risk-model:43a2986
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8000
@@ -35,18 +35,21 @@ spec:
               path: /health
               port: http
             periodSeconds: 5
-            failureThreshold: 24
+            timeoutSeconds: 3
+            failureThreshold: 60
           readinessProbe:
             httpGet:
               path: /health
               port: http
             periodSeconds: 10
+            timeoutSeconds: 3
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health
               port: http
             periodSeconds: 20
+            timeoutSeconds: 3
             failureThreshold: 3
 ---
 apiVersion: v1
