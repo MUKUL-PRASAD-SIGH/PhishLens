@@ -50,7 +50,7 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 - [x] JUnit tests: thresholds 0.39 / 0.40 / 0.69 / 0.70, controller 200 and 400, fallback when model is down *(95 tests.)*
 - [x] Jenkins in Docker (`ci/jenkins/Dockerfile`)
 - [x] `Jenkinsfile`: Checkout → Test → Package → Archive, polling every minute; run it once by hand, then push and watch it start itself *(Build #2 started itself from a push; the job now builds `main`.)*
-- [x] Add a Python test stage for M2's pytest suite (Day 7) *(13 pytest tests; 108 with the JUnit tests.)*
+- [x] Add a Python test stage for M2's pytest suite (Day 7) *(61 pytest tests since PR #22; 95 JUnit tests.)*
 - [x] Tag the JAR and build name with the commit SHA
 
 **Days 9–11: integration (on M3's laptop)**
@@ -76,10 +76,10 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 **Days 3–8: the model and containers (your Day 7 handoff unblocks both teammates)**
 - [x] `features.py`: URL length, digits, special characters, `@`, IP host, subdomains, suspicious TLD, HTTPS, entropy
 - [x] v1 heuristic score (weighted sum, 0–1). **Send the weights to M1 by Day 5.** *(Weights: `V1_WEIGHTS` in `risk-model/app/scorer.py`. scan-api `FallbackScorer` already uses the same weights, so this handoff is done.)*
-- [x] pytest suite: feature tests and API tests (200, 422, `/health`)
+- [x] pytest suite: feature tests, API tests (200, 422, 405, 404, `/health` 200 and 503), scorer, metrics counter and `train.py` end to end *(61 tests, PR #22.)*
 - [~] `risk-model/Dockerfile` (`python:3.12-slim`, non-root) and `.dockerignore` *(Written, image build not yet verified; Docker was not running.)*
 - [~] `scan-api/Dockerfile` as a **multi-stage** build (Maven build stage, JRE runtime stage, non-root); also build a single-stage one and note both image sizes *(Both Dockerfiles are on `main`; image sizes not yet recorded. `docker-compose.yml` is still missing.)*
-- [ ] `docker-compose.yml`: `docker compose up --build`, then curl on port 8080 must show `source: model`
+- [~] `docker-compose.yml`: `docker compose up --build`, then curl on port 8080 must show `source: model` *(File is on `main`. Not run under Docker yet: the engine would not start with 0.7 GB RAM free. The same flow was run without Docker on 2026-11-08: risk-model v2 plus the scan-api jar returned `source: model`, and `source: fallback` with the model stopped. Ports 8000 and 8080 can be taken by other local containers; compose honours `RISK_MODEL_PORT`.)*
 - [x] `/metrics` endpoint and the `phishlens_predictions_total` counter
 
 **Days 9–11: integration**
