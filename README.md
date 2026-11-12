@@ -2,9 +2,9 @@
 
 **A malicious-URL risk scanner, built and shipped through a complete CI/CD → Kubernetes pipeline.**
 
-DevOps project · Course 24CIAEC59 · Team of 3
+DevOps project · Course 25CIAEC59 · Team of 3
 
-> Status: `risk-model` (ML service) done; `scan-api`, CI, Ansible and Kubernetes pending. Team members: start with [docs/TASKS.md](docs/TASKS.md).
+> Status: all three parts are on `main`: `scan-api` and the Jenkins pipeline with Docker and Trivy stages (M1), `risk-model` and the Dockerfiles (M2), and the Ansible role, Kubernetes manifests, scripts and evidence (M3). What is still open is listed in [docs/TASKS.md](docs/TASKS.md).
 
 ---
 
@@ -30,13 +30,13 @@ Component 1 — Continuous Integration
   git push ─▶ GitHub ─(SCM poll)─▶ Jenkins: test ─▶ package ─▶ docker build ─▶ scan
                                         │
                                         ├─▶ scan-api.jar              (archived artifact)
-                                        └─▶ phishlens/*:<git-sha>     (versioned images)
+                                        └─▶ nikitaravindra/*:<git-sha> (versioned images on Docker Hub)
 
 Component 2 — Configure, deploy, scale
   scan-api.jar ─▶ Ansible role ─▶ Ubuntu VM  (runs as a systemd service)
 
   images ─▶ Minikube, namespace "phishlens"
-            client ─▶ NodePort ─▶ scan-api   (3 → 5 pods, HPA up to 6)
+            client ─▶ NodePort ─▶ scan-api   (3 pods, scaled by hand; HPA set to 3 to 6)
                                      │  POST /predict
                                      ▼
                        ClusterIP ─▶ risk-model (2 pods)
@@ -70,11 +70,12 @@ phishlens/
 │   └── roles/scan_api/          defaults, tasks, handlers, templates
 ├── k8s/                         [M3]
 │   ├── 00-namespace.yaml
-│   ├── 01-configmap.yaml
-│   ├── 10-risk-model.yaml       Deployment + ClusterIP Service
-│   ├── 20-scan-api.yaml         Deployment + NodePort Service
-│   └── 30-hpa.yaml
-├── scripts/                     [M3] demo-scale.sh, demo-rollback.sh, load-test.sh
+│   ├── configmap.yaml
+│   ├── risk-model.yaml          Deployment + ClusterIP Service
+│   ├── scan-api.yaml            Deployment + NodePort Service
+│   └── hpa.yaml
+├── scripts/                     [M3] demo-scale.sh, demo-configmap.sh, demo-rollback.sh, load-test.sh, capture-evidence.sh
+├── evidence/                    [M3] Ansible and Kubernetes screenshots and captured output, indexed in EVIDENCE_INDEX.md
 ├── docker-compose.yml           [M2] both services locally, without Kubernetes
 ├── docs/                        SPEC.md, TEAM_PLAN.md, report/ (drafts + screenshots)
 ├── repo_link.txt                [M1]
@@ -103,11 +104,9 @@ cd ansible && ansible-playbook -i inventory.ini playbook.yml
 minikube start --cpus=4 --memory=6g
 minikube addons enable metrics-server
 SHA=$(git rev-parse --short HEAD)
-minikube image load phishlens/scan-api:$SHA
-minikube image load phishlens/risk-model:$SHA
-kubectl apply -f k8s/
-kubectl -n phishlens set image deploy/scan-api scan-api=phishlens/scan-api:$SHA
-kubectl -n phishlens set image deploy/risk-model risk-model=phishlens/risk-model:$SHA
+kubectl apply -f k8s/   # pulls nikitaravindra/{scan-api,risk-model}:43a2986 from Docker Hub
+kubectl -n phishlens set image deploy/scan-api scan-api=nikitaravindra/scan-api:$SHA
+kubectl -n phishlens set image deploy/risk-model risk-model=nikitaravindra/risk-model:$SHA
 kubectl -n phishlens get pods,svc
 minikube service scan-api -n phishlens --url   # on Docker Desktop this keeps a tunnel open; use a second terminal
 
@@ -130,12 +129,13 @@ kubectl -n phishlens annotate deploy/scan-api kubernetes.io/change-cause="v2: tr
 |---|---|
 | [docs/TASKS.md](docs/TASKS.md) | **Start here.** One-page task split per member, with checklists |
 | [docs/SPEC.md](docs/SPEC.md) | System requirements, metrics, API and config contracts (frozen on day 1) |
+| [docs/report/](docs/report/) | The Component 1 and Component 2 reports and their screenshots; M3's evidence index is [evidence/EVIDENCE_INDEX.md](evidence/EVIDENCE_INDEX.md) |
 | [docs/TEAM_PLAN.md](docs/TEAM_PLAN.md) | Roles, 21-day phase plan, handoffs, integration runbook, demo flow, evidence checklist, working rules, rubric map |
 
 ## Team
 
 | Role | Name | GitHub |
 |---|---|---|
-| Member 1 — Application & CI | | |
-| Member 2 — ML service & containers | | |
-| Member 3 — Infrastructure & deployment | | |
+| Member 1 — Application & CI | | nikitaravindra-ux |
+| Member 2 — ML service & containers | | MUKUL-PRASAD-SIGH |
+| Member 3 — Infrastructure & deployment | | Swastikphadke |

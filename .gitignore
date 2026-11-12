@@ -21,3 +21,5 @@ risk-model/data/
 .env
 jenkins_home/
 *.log
+# Captured evidence is kept even when it is a log
+!evidence/**/*.log

@@ -222,7 +222,7 @@ M3 owns the Ansible host, the cluster and the demo machine, and runs the Compone
     - Lower `RISK_THRESHOLD` from 0.70 to 0.60 and run `kubectl rollout restart`.
     - Show a borderline URL changing verdict, with no code change.
 11. HPA.
-    - Enable the `metrics-server` addon and add `30-hpa.yaml` (min 3, max 6, 60% CPU).
+    - Enable the `metrics-server` addon and add the HPA, now `k8s/hpa.yaml` (min 3, max 6). The team settled on a 70% CPU target instead of the planned 60%: on the 2 GiB Minikube node each extra pod is a memory risk, so scaling later is safer.
     - Load-test with `hey` and watch `kubectl get hpa -w`.
     - Record the manual scaling demo before applying the HPA, because the HPA overrides `kubectl scale`.
 12. Rolling update to v2.
