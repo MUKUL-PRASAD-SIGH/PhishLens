@@ -1,0 +1,3 @@
+# Shell scripts must keep LF endings even on a Windows checkout (core.autocrlf=true),
+# otherwise bash in WSL/Linux fails on the carriage returns.
+*.sh text eol=lf

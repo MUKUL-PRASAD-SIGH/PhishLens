@@ -1,0 +1,22 @@
+$ kubectl diff -f <each k8s manifest>
+# captured 2026-11-06 06:58:28 +0530
+## k8s/00-namespace.yaml
+exit=0
+## k8s/configmap.yaml
+exit=0
+## k8s/risk-model.yaml
+exit=0
+## k8s/scan-api.yaml
+exit=0
+## k8s/hpa.yaml
+exit=0
+
+$ kubectl get deploy -A; kubectl get pods -A --field-selector=status.phase!=Running; kubectl -n phishlens get rs (replicas>0)
+NAMESPACE     NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system   coredns          1/1     1            1           7d12h
+kube-system   metrics-server   1/1     1            1           7d12h
+phishlens     risk-model       2/2     2            2           7d11h
+phishlens     scan-api         3/3     3            3           7d10h
+No resources found
+risk-model-6577bf948f   2     2     2     11h
+scan-api-66484cf4cc     3     3     3     9h

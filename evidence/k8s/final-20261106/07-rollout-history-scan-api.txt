@@ -1,0 +1,15 @@
+$ kubectl -n phishlens rollout history deployment/scan-api
+# captured 2026-11-06 06:58:14 +0530
+deployment.apps/scan-api 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+5         <none>
+6         <none>
+7         <none>
+8         <none>
+9         <none>
+10        <none>
+
+# exit code: 0

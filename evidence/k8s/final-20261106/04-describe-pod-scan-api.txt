@@ -1,0 +1,85 @@
+$ kubectl -n phishlens describe pod scan-api-66484cf4cc-2p628
+# captured 2026-11-06 06:58:14 +0530
+Name:             scan-api-66484cf4cc-2p628
+Namespace:        phishlens
+Priority:         0
+Service Account:  default
+Node:             minikube/192.168.49.2
+Start Time:       Thu, 05 Nov 2026 21:52:50 +0530
+Labels:           app=scan-api
+                  pod-template-hash=66484cf4cc
+Annotations:      kubectl.kubernetes.io/restartedAt: 2026-11-05T21:42:06+05:30
+Status:           Running
+IP:               10.244.0.6
+IPs:
+  IP:           10.244.0.6
+Controlled By:  ReplicaSet/scan-api-66484cf4cc
+Containers:
+  scan-api:
+    Container ID:   containerd://7e9746e99725a1e0dbb3bf785f7a923923d8e918c26ddc351a3668309a4c38d4
+    Image:          nikitaravindra/scan-api:43a2986
+    Image ID:       docker.io/nikitaravindra/scan-api@sha256:c43322c368d0d7704761d639053560fe9acaca5bb15e818e1f96f63c0d341f7e
+    Port:           8080/TCP (http)
+    Host Port:      0/TCP (http)
+    State:          Running
+      Started:      Fri, 06 Nov 2026 06:51:42 +0530
+    Last State:     Terminated
+      Reason:       Unknown
+      Exit Code:    255
+      Started:      Thu, 05 Nov 2026 22:37:01 +0530
+      Finished:     Fri, 06 Nov 2026 06:50:56 +0530
+    Ready:          True
+    Restart Count:  3
+    Limits:
+      cpu:     500m
+      memory:  512Mi
+    Requests:
+      cpu:      250m
+      memory:   384Mi
+    Liveness:   http-get http://:http/actuator/health/liveness delay=0s timeout=3s period=20s #success=1 #failure=3
+    Readiness:  http-get http://:http/actuator/health/readiness delay=0s timeout=3s period=10s #success=1 #failure=3
+    Startup:    http-get http://:http/actuator/health delay=0s timeout=3s period=5s #success=1 #failure=60
+    Environment Variables from:
+      phishlens-config  ConfigMap  Optional: false
+    Environment:
+      JAVA_TOOL_OPTIONS:  -XX:MaxRAMPercentage=75
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-d2m7w (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  kube-api-access-d2m7w:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    Optional:                false
+    DownwardAPI:             true
+QoS Class:                   Burstable
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type     Reason          Age                     From               Message
+  ----     ------          ----                    ----               -------
+  Normal   Scheduled       9h                      default-scheduler  Successfully assigned phishlens/scan-api-66484cf4cc-2p628 to minikube
+  Normal   Pulled          9h                      kubelet            spec.containers{scan-api}: Successfully pulled image "nikitaravindra/scan-api:43a2986" in 3.262s (5.215s including waiting). Image size: 134792559 bytes.
+  Warning  Unhealthy       9h (x29 over 9h)        kubelet            spec.containers{scan-api}: Startup probe failed: Get "http://10.244.0.40:8080/actuator/health": dial tcp 10.244.0.40:8080: connect: connection refused
+  Normal   Pulled          8h                      kubelet            spec.containers{scan-api}: Successfully pulled image "nikitaravindra/scan-api:43a2986" in 2.607s (10.509s including waiting). Image size: 134792559 bytes.
+  Warning  Unhealthy       8h (x9 over 9h)         kubelet            spec.containers{scan-api}: Startup probe failed: Get "http://10.244.0.40:8080/actuator/health": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+  Normal   Killing         8h (x2 over 8h)         kubelet            spec.containers{scan-api}: Container scan-api failed startup probe, will be restarted
+  Normal   Pulling         8h (x3 over 9h)         kubelet            spec.containers{scan-api}: Pulling image "nikitaravindra/scan-api:43a2986"
+  Normal   Pulled          8h                      kubelet            spec.containers{scan-api}: Successfully pulled image "nikitaravindra/scan-api:43a2986" in 1.806s (3.545s including waiting). Image size: 134792559 bytes.
+  Normal   Created         8h (x3 over 9h)         kubelet            spec.containers{scan-api}: Container created
+  Normal   Started         8h (x3 over 9h)         kubelet            spec.containers{scan-api}: Container started
+  Normal   SandboxChanged  6m58s                   kubelet            Pod sandbox changed, it will be killed and re-created.
+  Normal   Pulling         6m48s                   kubelet            spec.containers{scan-api}: Pulling image "nikitaravindra/scan-api:43a2986"
+  Normal   Pulled          6m34s                   kubelet            spec.containers{scan-api}: Successfully pulled image "nikitaravindra/scan-api:43a2986" in 2.386s (14.391s including waiting). Image size: 134792559 bytes.
+  Normal   Created         6m34s                   kubelet            spec.containers{scan-api}: Container created
+  Normal   Started         6m32s                   kubelet            spec.containers{scan-api}: Container started
+  Warning  Unhealthy       4m28s (x25 over 6m27s)  kubelet            spec.containers{scan-api}: Startup probe failed: Get "http://10.244.0.6:8080/actuator/health": dial tcp 10.244.0.6:8080: connect: connection refused
+# exit code: 0

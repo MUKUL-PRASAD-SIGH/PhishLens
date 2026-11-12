@@ -1,0 +1,5 @@
+$ minikube ssh -- curl -s -m 15 -w ' HTTP %{http_code}\n' http://192.168.49.2:30080/api/info; curl -s -m 15 -w ' HTTP %{http_code}\n' http://192.168.49.2:30080/actuator/health
+# captured 2026-11-05 20:57:19 +0530
+{"service":"scan-api","version":"0.1.0","commit":"43a2986"} HTTP 200
+{"status":"UP","groups":["liveness","readiness"]} HTTP 200
+# exit code: 0

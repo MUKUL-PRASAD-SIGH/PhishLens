@@ -1,0 +1,51 @@
+$ bash scripts/demo-scale.sh --suspend-hpa 3 4 3
+# started 2026-11-05 21:45:57 +0530
+Suspending HPA 'scan-api-hpa' for the manual scaling demo (it is re-applied at the end).
+horizontalpodautoscaler.autoscaling "scan-api-hpa" deleted from phishlens namespace
+PhishLens manual scaling demo: 3 4 3 (namespace phishlens)
+
+=== Starting state
+scan-api ready replicas: 3/3
+NAME                        READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+scan-api-66484cf4cc-ds7bh   1/1     Running   0          2m49s   10.244.0.36   minikube   <none>           <none>
+scan-api-66484cf4cc-qh24f   1/1     Running   0          2m1s    10.244.0.37   minikube   <none>           <none>
+scan-api-66484cf4cc-wjrgk   1/1     Running   0          3m53s   10.244.0.35   minikube   <none>           <none>
+
+=== 21:45:59 Scaling scan-api to 3 replicas
+deployment.apps/scan-api scaled
+deployment "scan-api" successfully rolled out
+scan-api ready replicas: 3/3
+NAME                        READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+scan-api-66484cf4cc-ds7bh   1/1     Running   0          2m51s   10.244.0.36   minikube   <none>           <none>
+scan-api-66484cf4cc-qh24f   1/1     Running   0          2m3s    10.244.0.37   minikube   <none>           <none>
+scan-api-66484cf4cc-wjrgk   1/1     Running   0          3m55s   10.244.0.35   minikube   <none>           <none>
+
+=== 21:46:02 Scaling scan-api to 4 replicas
+deployment.apps/scan-api scaled
+Waiting for deployment "scan-api" rollout to finish: 3 out of 4 new replicas have been updated...
+Waiting for deployment "scan-api" rollout to finish: 3 out of 4 new replicas have been updated...
+Waiting for deployment "scan-api" rollout to finish: 3 of 4 updated replicas are available...
+deployment "scan-api" successfully rolled out
+scan-api ready replicas: 4/4
+NAME                        READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+scan-api-66484cf4cc-ds7bh   1/1     Running   0          4m26s   10.244.0.36   minikube   <none>           <none>
+scan-api-66484cf4cc-qh24f   1/1     Running   0          3m38s   10.244.0.37   minikube   <none>           <none>
+scan-api-66484cf4cc-rn56h   1/1     Running   0          94s     10.244.0.38   minikube   <none>           <none>
+scan-api-66484cf4cc-wjrgk   1/1     Running   0          5m30s   10.244.0.35   minikube   <none>           <none>
+
+=== 21:47:36 Scaling scan-api to 3 replicas
+deployment.apps/scan-api scaled
+deployment "scan-api" successfully rolled out
+scan-api ready replicas: 3/3
+NAME                        READY   STATUS        RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+scan-api-66484cf4cc-ds7bh   1/1     Running       0          4m28s   10.244.0.36   minikube   <none>           <none>
+scan-api-66484cf4cc-qh24f   1/1     Running       0          3m40s   10.244.0.37   minikube   <none>           <none>
+scan-api-66484cf4cc-rn56h   1/1     Terminating   0          96s     10.244.0.38   minikube   <none>           <none>
+scan-api-66484cf4cc-wjrgk   1/1     Running       0          5m32s   10.244.0.35   minikube   <none>           <none>
+
+Scaling demo completed: 3 4 3.
+
+Re-applying the HPA from /c/Users/Admin/Desktop/PhishLens/scripts/../k8s/hpa.yaml ...
+horizontalpodautoscaler.autoscaling/scan-api-hpa created
+# exit code: 0
+# finished 2026-11-05 21:47:39 +0530

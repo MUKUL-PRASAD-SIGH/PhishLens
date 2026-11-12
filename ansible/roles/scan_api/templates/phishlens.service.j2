@@ -1,0 +1,24 @@
+[Unit]
+Description=PhishLens Scan API
+After=network.target
+
+[Service]
+Type=simple
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ app_dir }}
+
+ExecStart=/usr/bin/java -XX:MaxRAMPercentage=75 -jar {{ app_dir }}/{{ app_jar }}
+
+Environment="SERVER_PORT={{ app_port }}"
+Environment="MODEL_URL={{ model_url }}"
+Environment="RISK_THRESHOLD={{ risk_threshold }}"
+Environment="MODEL_TIMEOUT_MS={{ model_timeout_ms }}"
+
+Restart=on-failure
+RestartSec=5
+
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target

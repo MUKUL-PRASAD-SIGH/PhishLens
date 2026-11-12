@@ -1,0 +1,64 @@
+$ kubectl -n phishlens get events --sort-by=.lastTimestamp
+# captured 2026-11-12 08:16:24 +0530
+LAST SEEN   TYPE      REASON                         OBJECT                                 MESSAGE
+60m         Warning   FailedGetResourceMetric        horizontalpodautoscaler/scan-api-hpa   failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+60m         Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/scan-api-hpa   invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+60m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-c5ghs          Readiness probe failed: Get "http://10.244.0.5:8080/actuator/health/readiness": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+60m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-2p628          Startup probe failed: Get "http://10.244.0.8:8080/actuator/health": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+60m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-5nlml          Readiness probe failed: Get "http://10.244.0.7:8080/actuator/health/readiness": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+59m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-mgvnv          Startup probe failed: Get "http://10.244.0.9:8080/actuator/health": dial tcp 10.244.0.9:8080: connect: connection refused
+59m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-28l27          Startup probe failed: Get "http://10.244.0.10:8080/actuator/health": dial tcp 10.244.0.10:8080: connect: connection refused
+57m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-k4x6h          Readiness probe failed: Get "http://10.244.0.11:8080/actuator/health/readiness": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+57m         Normal    Killing                        pod/scan-api-66484cf4cc-28l27          Container scan-api failed startup probe, will be restarted
+57m         Normal    Killing                        pod/scan-api-66484cf4cc-mgvnv          Container scan-api failed startup probe, will be restarted
+56m         Warning   FailedComputeMetricsReplicas   horizontalpodautoscaler/scan-api-hpa   invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+56m         Warning   FailedGetResourceMetric        horizontalpodautoscaler/scan-api-hpa   failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+56m         Normal    Pulling                        pod/scan-api-66484cf4cc-mgvnv          Pulling image "nikitaravindra/scan-api:43a2986"
+56m         Normal    Pulling                        pod/scan-api-66484cf4cc-28l27          Pulling image "nikitaravindra/scan-api:43a2986"
+56m         Normal    Pulled                         pod/scan-api-66484cf4cc-28l27          Successfully pulled image "nikitaravindra/scan-api:43a2986" in 16.65s (16.65s including waiting). Image size: 134792559 bytes.
+56m         Normal    Started                        pod/scan-api-66484cf4cc-28l27          Container started
+56m         Normal    Created                        pod/scan-api-66484cf4cc-28l27          Container created
+55m         Normal    Pulled                         pod/scan-api-66484cf4cc-mgvnv          Successfully pulled image "nikitaravindra/scan-api:43a2986" in 15.994s (32.643s including waiting). Image size: 134792559 bytes.
+55m         Normal    Started                        pod/scan-api-66484cf4cc-mgvnv          Container started
+55m         Normal    Created                        pod/scan-api-66484cf4cc-mgvnv          Container created
+54m         Warning   FailedRescale                  horizontalpodautoscaler/scan-api-hpa   New size: 3; reason: All metrics below target; error: etcdserver: request timed out
+54m         Normal    ScalingReplicaSet              deployment/scan-api                    Scaled down replica set scan-api-66484cf4cc from 6 to 3
+54m         Normal    SuccessfulDelete               replicaset/scan-api-66484cf4cc         Deleted pod: scan-api-66484cf4cc-mgvnv
+54m         Normal    Killing                        pod/scan-api-66484cf4cc-mgvnv          Stopping container scan-api
+54m         Normal    SuccessfulDelete               replicaset/scan-api-66484cf4cc         Deleted pod: scan-api-66484cf4cc-28l27
+54m         Normal    SuccessfulDelete               replicaset/scan-api-66484cf4cc         Deleted pod: scan-api-66484cf4cc-c5ghs
+54m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-c5ghs          Liveness probe failed: Get "http://10.244.0.5:8080/actuator/health/liveness": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+54m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-5nlml          Liveness probe failed: Get "http://10.244.0.7:8080/actuator/health/liveness": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+54m         Normal    Killing                        pod/scan-api-66484cf4cc-28l27          Stopping container scan-api
+53m         Normal    Killing                        pod/scan-api-66484cf4cc-c5ghs          Stopping container scan-api
+53m         Warning   FailedToUpdateEndpointSlices   service/scan-api                       Error updating Endpoint Slices for Service phishlens/scan-api: failed to update scan-api-sf4xj EndpointSlice for Service phishlens/scan-api: etcdserver: request timed out
+53m         Warning   Unhealthy                      pod/scan-api-66484cf4cc-2p628          Readiness probe failed: Get "http://10.244.0.8:8080/actuator/health/readiness": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+53m         Warning   Unhealthy                      pod/risk-model-6577bf948f-ltg2d        Readiness probe failed: Get "http://10.244.0.3:8000/health": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+53m         Warning   Unhealthy                      pod/risk-model-6577bf948f-f92ms        Readiness probe failed: Get "http://10.244.0.6:8000/health": context deadline exceeded (Client.Timeout exceeded while awaiting headers)
+53m         Warning   FailedToUpdateEndpointSlices   service/scan-api                       Error updating Endpoint Slices for Service phishlens/scan-api: failed to update scan-api-sf4xj EndpointSlice for Service phishlens/scan-api: Operation cannot be fulfilled on endpointslices.discovery.k8s.io "scan-api-sf4xj": the object has been modified; please apply your changes to the latest version and try again
+3m4s        Normal    ScalingReplicaSet              deployment/scan-api                    Scaled up replica set scan-api-7897f6c7d6 from 0 to 1
+3m4s        Normal    SuccessfulCreate               replicaset/scan-api-7897f6c7d6         Created pod: scan-api-7897f6c7d6-f2lcx
+3m3s        Normal    Scheduled                      pod/scan-api-7897f6c7d6-f2lcx          Successfully assigned phishlens/scan-api-7897f6c7d6-f2lcx to minikube
+2m57s       Normal    Pulled                         pod/scan-api-7897f6c7d6-f2lcx          Successfully pulled image "nikitaravindra/scan-api:v3-broken-c1670ef" in 1.721s (1.721s including waiting). Image size: 134793500 bytes.
+2m19s       Normal    Pulled                         pod/scan-api-7897f6c7d6-f2lcx          Successfully pulled image "nikitaravindra/scan-api:v3-broken-c1670ef" in 1.528s (1.528s including waiting). Image size: 134793500 bytes.
+111s        Warning   BackOff                        pod/scan-api-7897f6c7d6-f2lcx          Back-off restarting failed container scan-api in pod scan-api-7897f6c7d6-f2lcx_phishlens(a13a2e4f-41f3-4230-8d71-03b49cf7b012)
+102s        Normal    Pulling                        pod/scan-api-7897f6c7d6-f2lcx          Pulling image "nikitaravindra/scan-api:v3-broken-c1670ef"
+100s        Normal    Started                        pod/scan-api-7897f6c7d6-f2lcx          Container started
+100s        Normal    Pulled                         pod/scan-api-7897f6c7d6-f2lcx          Successfully pulled image "nikitaravindra/scan-api:v3-broken-c1670ef" in 1.541s (1.541s including waiting). Image size: 134793500 bytes.
+100s        Normal    Created                        pod/scan-api-7897f6c7d6-f2lcx          Container created
+97s         Warning   Unhealthy                      pod/scan-api-7897f6c7d6-f2lcx          Startup probe failed: Get "http://10.244.0.12:8080/actuator/health": dial tcp 10.244.0.12:8080: connect: connection refused
+95s         Normal    Killing                        pod/scan-api-7897f6c7d6-f2lcx          Stopping container scan-api
+95s         Normal    SuccessfulDelete               replicaset/scan-api-7897f6c7d6         Deleted pod: scan-api-7897f6c7d6-f2lcx
+95s         Normal    ScalingReplicaSet              deployment/scan-api                    Scaled down replica set scan-api-7897f6c7d6 from 1 to 0
+50s         Normal    ScalingReplicaSet              deployment/scan-api                    Scaled up replica set scan-api-66484cf4cc from 3 to 4
+50s         Normal    SuccessfulCreate               replicaset/scan-api-66484cf4cc         Created pod: scan-api-66484cf4cc-kxjtc
+50s         Normal    Scheduled                      pod/scan-api-66484cf4cc-kxjtc          Successfully assigned phishlens/scan-api-66484cf4cc-kxjtc to minikube
+50s         Normal    Pulling                        pod/scan-api-66484cf4cc-kxjtc          Pulling image "nikitaravindra/scan-api:43a2986"
+48s         Normal    Pulled                         pod/scan-api-66484cf4cc-kxjtc          Successfully pulled image "nikitaravindra/scan-api:43a2986" in 1.499s (1.499s including waiting). Image size: 134792559 bytes.
+48s         Normal    Created                        pod/scan-api-66484cf4cc-kxjtc          Container created
+48s         Normal    Started                        pod/scan-api-66484cf4cc-kxjtc          Container started
+25s         Warning   Unhealthy                      pod/scan-api-66484cf4cc-kxjtc          Startup probe failed: Get "http://10.244.0.13:8080/actuator/health": dial tcp 10.244.0.13:8080: connect: connection refused
+18s         Normal    SuccessfulDelete               replicaset/scan-api-66484cf4cc         Deleted pod: scan-api-66484cf4cc-kxjtc
+18s         Normal    ScalingReplicaSet              deployment/scan-api                    Scaled down replica set scan-api-66484cf4cc from 4 to 3
+17s         Normal    Killing                        pod/scan-api-66484cf4cc-kxjtc          Stopping container scan-api
+# exit code: 0

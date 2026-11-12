@@ -1,0 +1,9 @@
+$ minikube service scan-api -n phishlens --url   (kept running in the background; Docker driver on Windows)
+# captured 2026-11-05 20:59:28 +05:30
+tunnel URL printed by minikube: http://127.0.0.1:58536
+
+$ curl.exe -s http://127.0.0.1:58536/api/info
+{"service":"scan-api","version":"0.1.0","commit":"43a2986"} HTTP 200
+
+$ curl.exe -s -X POST -H 'Content-Type: application/json' -d '{"url":"http://192.168.4.7/secure-update/login.php?account=verify&id=88231"}' http://127.0.0.1:58536/api/scan
+{"url":"http://192.168.4.7/secure-update/login.php?account=verify&id=88231","score":1.0,"verdict":"MALICIOUS","source":"model","modelVersion":"v2","scannedAt":"2026-11-05T15:29:29Z"} HTTP 200

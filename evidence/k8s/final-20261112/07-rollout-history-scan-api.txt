@@ -1,0 +1,16 @@
+$ kubectl -n phishlens rollout history deployment/scan-api
+# captured 2026-11-12 08:16:23 +0530
+deployment.apps/scan-api 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+5         <none>
+6         <none>
+7         <none>
+8         <none>
+9         <none>
+11        rollback demo: deploy broken v3 (nikitaravindra/scan-api:v3-broken-c1670ef)
+12        <none>
+
+# exit code: 0

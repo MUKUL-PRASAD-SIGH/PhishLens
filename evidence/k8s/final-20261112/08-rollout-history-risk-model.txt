@@ -1,0 +1,9 @@
+$ kubectl -n phishlens rollout history deployment/risk-model
+# captured 2026-11-12 08:16:23 +0530
+deployment.apps/risk-model 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+
+# exit code: 0

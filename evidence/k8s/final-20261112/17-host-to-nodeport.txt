@@ -1,0 +1,4 @@
+$ curl -s -m 5 -w  HTTP %{http_code}\n http://192.168.49.2:30080/api/info
+# captured 2026-11-12 08:16:27 +0530
+ HTTP 000
+# exit code: 28

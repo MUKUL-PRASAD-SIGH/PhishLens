@@ -1,4 +1,4 @@
-﻿apiVersion: apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scan-api
@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: scan-api
-          image: phishlens/scan-api:dev
-          imagePullPolicy: IfNotPresent
+          image: nikitaravindra/scan-api:43a2986
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
@@ -38,18 +38,21 @@ spec:
               path: /actuator/health
               port: http
             periodSeconds: 5
-            failureThreshold: 30
+            timeoutSeconds: 3
+            failureThreshold: 60
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: http
             periodSeconds: 10
+            timeoutSeconds: 3
             failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: http
             periodSeconds: 20
+            timeoutSeconds: 3
             failureThreshold: 3
 ---
 apiVersion: v1

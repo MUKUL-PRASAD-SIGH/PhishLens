@@ -1,0 +1,37 @@
+# Ansible static validation (WSL Ubuntu 24.04, venv ~/.venvs/ansible221)
+# captured 2026-11-05 21:37:15 +05:30
+$ ansible --version
+ansible [core 2.21.6]
+  config file = None
+  configured module search path = ['/home/ubuntu/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+
+$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --syntax-check
+
+playbook: ansible/playbook.yml
+# exit code: 0
+
+$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --list-tasks
+
+playbook: ansible/playbook.yml
+
+  play #1 (scan_servers): Deploy PhishLens Scan API	TAGS: []
+    tasks:
+      scan_api : Update apt package index	TAGS: []
+      scan_api : Install Java 17 runtime	TAGS: []
+      scan_api : Create application group	TAGS: []
+      scan_api : Create application user	TAGS: []
+      scan_api : Create application directory	TAGS: []
+      scan_api : Check whether the application JAR exists	TAGS: []
+      scan_api : Stop if application JAR is missing	TAGS: []
+      scan_api : Copy application JAR	TAGS: []
+      scan_api : Install systemd service	TAGS: []
+      scan_api : Enable and start PhishLens service	TAGS: []
+# exit code: 0
+
+$ ansible-inventory -i ansible/inventory.ini --graph
+@all:
+  |--@ungrouped:
+  |--@scan_servers:
+  |  |--ubuntu-vm
+# exit code: 0
+(ansible-lint not installed)

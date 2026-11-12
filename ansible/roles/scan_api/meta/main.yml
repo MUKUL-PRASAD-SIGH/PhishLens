@@ -1,0 +1,12 @@
+galaxy_info:
+  author: PhishLens M3 (infrastructure and deployment)
+  description: Install the PhishLens scan-api JAR on Ubuntu and run it as a systemd service
+  license: not specified (course project; the repository has no licence file)
+  min_ansible_version: "2.14"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags: []
+
+dependencies: []

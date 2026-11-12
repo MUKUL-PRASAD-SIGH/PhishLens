@@ -1,0 +1,11 @@
+# load test started 2026-11-05 21:48:12 +0530
+# generator: C:\Users\Admin\AppData\Local\Programs\Python\Python312\python.exe /c/Users/Admin/Desktop/PhishLens/scripts/loadgen.py --url http://127.0.0.1:51462/api/scan -m POST -c 6 -q 0 -z 180 -d {"url":"http://shop.example.net/item?id=123"}
+# starting replicas: 3; HPA maxReplicas during the test: 4 (manifest value 6)
+NAME           REFERENCE             TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3         4         3          35s
+NAME       CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+minikube   1390m        17%      1644Mi          42%         
+NAME                        CPU(cores)   MEMORY(bytes)   
+scan-api-66484cf4cc-ds7bh   65m          156Mi           
+scan-api-66484cf4cc-qh24f   16m          155Mi           
+scan-api-66484cf4cc-wjrgk   29m          153Mi           

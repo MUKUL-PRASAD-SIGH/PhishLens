@@ -1,0 +1,12 @@
+$ bash -c kubectl top nodes; echo; kubectl -n phishlens top pods
+# captured 2026-11-06 06:58:15 +0530
+NAME       CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+minikube   432m         5%       1685Mi          43%         
+
+NAME                          CPU(cores)   MEMORY(bytes)   
+risk-model-6577bf948f-f92ms   4m           117Mi           
+risk-model-6577bf948f-ltg2d   4m           101Mi           
+scan-api-66484cf4cc-2p628     7m           144Mi           
+scan-api-66484cf4cc-mxmxh     11m          176Mi           
+scan-api-66484cf4cc-qh24f     7m           142Mi           
+# exit code: 0

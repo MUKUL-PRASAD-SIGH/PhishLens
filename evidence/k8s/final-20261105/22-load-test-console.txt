@@ -1,0 +1,130 @@
+$ TARGET_URL=http://127.0.0.1:51462 LOADGEN=python ENDPOINT=scan CONCURRENCY=6 QPS=0 DURATION=180 HPA_MAX_CAP=4 SETTLE=90 bash scripts/load-test.sh --yes
+# started 2026-11-05 21:48:09 +0530
+HPA before the test:
+NAME           REFERENCE             TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3         6         3          34s
+
+NAME                        CPU(cores)   MEMORY(bytes)   
+scan-api-66484cf4cc-ds7bh   65m          156Mi           
+scan-api-66484cf4cc-qh24f   16m          155Mi           
+scan-api-66484cf4cc-wjrgk   29m          153Mi           
+
+Load generator:     python
+Load command:       C:\Users\Admin\AppData\Local\Programs\Python\Python312\python.exe /c/Users/Admin/Desktop/PhishLens/scripts/loadgen.py --url http://127.0.0.1:51462/api/scan -m POST -c 6 -q 0 -z 180 -d {"url":"http://shop.example.net/item?id=123"}
+TARGET_URL:         http://127.0.0.1:51462 (reachable: true)
+HPA maxReplicas:    temporarily capped at 4, restored afterwards
+Writing logs to evidence/k8s/final-20261105/22-load-test
+horizontalpodautoscaler.autoscaling/scan-api-hpa patched
+Generating load (Ctrl-C stops it and restores the HPA)...
+--- 21:48:14 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3     4     3     36s
+scan-api-66484cf4cc-ds7bh   65m   156Mi   
+scan-api-66484cf4cc-qh24f   16m   155Mi   
+scan-api-66484cf4cc-wjrgk   29m   153Mi   
+--- 21:48:30 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3     4     3     53s
+scan-api-66484cf4cc-ds7bh   65m   156Mi   
+scan-api-66484cf4cc-qh24f   16m   155Mi   
+scan-api-66484cf4cc-wjrgk   29m   153Mi   
+--- 21:48:47 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3     4     3     70s
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:04 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     87s
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:20 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     103s
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:37 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     2m
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:54 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     2m16s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+--- 21:50:10 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     3     2m33s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+WARNING: 1 scan-api pod(s) Pending
+--- 21:50:27 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     4     2m50s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+--- 21:50:44 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     4     3m7s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+--- 21:51:01 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     4     3m24s
+scan-api-66484cf4cc-ds7bh   243m   187Mi   
+scan-api-66484cf4cc-ghghl   340m   41Mi    
+scan-api-66484cf4cc-qh24f   251m   184Mi   
+scan-api-66484cf4cc-wjrgk   251m   181Mi   
+
+Load finished at 21:51:16. Sampling for another 90s...
+--- 21:51:18 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 99%/70%   3     4     4     3m41s
+scan-api-66484cf4cc-ds7bh   243m   187Mi   
+scan-api-66484cf4cc-ghghl   340m   41Mi    
+scan-api-66484cf4cc-qh24f   251m   184Mi   
+scan-api-66484cf4cc-wjrgk   251m   181Mi   
+--- 21:51:34 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 99%/70%   3     4     4     3m57s
+scan-api-66484cf4cc-ds7bh   243m   187Mi   
+scan-api-66484cf4cc-ghghl   340m   41Mi    
+scan-api-66484cf4cc-qh24f   251m   184Mi   
+scan-api-66484cf4cc-wjrgk   251m   181Mi   
+--- 21:51:50 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     4m13s
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   
+--- 21:52:06 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     4m28s
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   
+--- 21:52:22 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     4m44s
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   
+--- 21:52:37 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     5m
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   
+
+Generator summary:
+Summary:
+  Total:        180.53 secs
+  Requests:     3341
+  Requests/sec: 18.51
+  Latency p50 0.250s  p90 0.578s  p99 1.016s  max 8.093s
+
+Status code distribution:
+  [200] 3341 responses
+
+Replicas: start 3, highest sampled 4, end 4
+RESULT: the HPA scaled scan-api up from 3 to 4 during this test.
+Logs: evidence/k8s/final-20261105/22-load-test (before.txt, hpa-samples.log, generator-output.txt, after.txt)
+HPA maxReplicas restored to 6
+# exit code: 0
+# finished 2026-11-05 21:52:48 +0530

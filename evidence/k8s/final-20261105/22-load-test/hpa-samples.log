@@ -1,0 +1,93 @@
+--- 21:48:14 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3     4     3     36s
+scan-api-66484cf4cc-ds7bh   65m   156Mi   
+scan-api-66484cf4cc-qh24f   16m   155Mi   
+scan-api-66484cf4cc-wjrgk   29m   153Mi   
+--- 21:48:30 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3     4     3     53s
+scan-api-66484cf4cc-ds7bh   65m   156Mi   
+scan-api-66484cf4cc-qh24f   16m   155Mi   
+scan-api-66484cf4cc-wjrgk   29m   153Mi   
+--- 21:48:47 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 14%/70%   3     4     3     70s
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:04 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     87s
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:20 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     103s
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:37 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     2m
+scan-api-66484cf4cc-ds7bh   150m   170Mi   
+scan-api-66484cf4cc-qh24f   108m   164Mi   
+scan-api-66484cf4cc-wjrgk   162m   172Mi   
+--- 21:49:54 replicas=3
+scan-api-hpa   Deployment/scan-api   cpu: 56%/70%   3     4     3     2m16s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+--- 21:50:10 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     3     2m33s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+WARNING: 1 scan-api pod(s) Pending
+--- 21:50:27 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     4     2m50s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+--- 21:50:44 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     4     3m7s
+scan-api-66484cf4cc-ds7bh   338m   183Mi   
+scan-api-66484cf4cc-qh24f   349m   179Mi   
+scan-api-66484cf4cc-wjrgk   345m   177Mi   
+--- 21:51:01 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 137%/70%   3     4     4     3m24s
+scan-api-66484cf4cc-ds7bh   243m   187Mi   
+scan-api-66484cf4cc-ghghl   340m   41Mi    
+scan-api-66484cf4cc-qh24f   251m   184Mi   
+scan-api-66484cf4cc-wjrgk   251m   181Mi   
+--- 21:51:18 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 99%/70%   3     4     4     3m41s
+scan-api-66484cf4cc-ds7bh   243m   187Mi   
+scan-api-66484cf4cc-ghghl   340m   41Mi    
+scan-api-66484cf4cc-qh24f   251m   184Mi   
+scan-api-66484cf4cc-wjrgk   251m   181Mi   
+--- 21:51:34 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 99%/70%   3     4     4     3m57s
+scan-api-66484cf4cc-ds7bh   243m   187Mi   
+scan-api-66484cf4cc-ghghl   340m   41Mi    
+scan-api-66484cf4cc-qh24f   251m   184Mi   
+scan-api-66484cf4cc-wjrgk   251m   181Mi   
+--- 21:51:50 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     4m13s
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   
+--- 21:52:06 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     4m28s
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   
+--- 21:52:22 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     4m44s
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   
+--- 21:52:37 replicas=4
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3     4     4     5m
+scan-api-66484cf4cc-ds7bh   171m   198Mi   
+scan-api-66484cf4cc-ghghl   441m   149Mi   
+scan-api-66484cf4cc-qh24f   153m   183Mi   
+scan-api-66484cf4cc-wjrgk   123m   194Mi   

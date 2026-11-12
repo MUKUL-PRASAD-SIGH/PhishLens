@@ -1,0 +1,4 @@
+$ minikube ssh -- curl -s -m 20 -w ' HTTP %{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{"url":"http://192.168.4.7/secure-update/login.php?account=verify&id=88231"}' http://192.168.49.2:30080/api/scan
+# captured 2026-11-06 06:58:18 +0530
+{"url":"http://192.168.4.7/secure-update/login.php?account=verify&id=88231","score":1.0,"verdict":"MALICIOUS","source":"model","modelVersion":"v2","scannedAt":"2026-11-06T01:28:22Z"} HTTP 200
+# exit code: 0
