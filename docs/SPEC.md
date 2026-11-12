@@ -96,7 +96,7 @@ These metrics cover the four golden signals: latency, traffic, errors and satura
 **Cluster**, via the metrics-server addon:
 
 - `kubectl top pods -n phishlens` shows CPU and memory per pod.
-- The HPA scales `scan-api` on average CPU utilization, with a 60% target.
+- The HPA scales `scan-api` on average CPU utilization, with a 70% target. *(Amended 2026-11-12: planned as 60%. The team agreed 70% because each extra pod is a memory risk on the 2 GiB Minikube node, so scaling later is safer. `k8s/hpa.yaml` has run at 70% throughout.)*
 
 ---
 ## 3. Contracts
@@ -189,7 +189,7 @@ These values are environment variables. In Kubernetes they live in the ConfigMap
 | Output | Name |
 |---|---|
 | JAR | `scan-api/target/scan-api.jar` (set `<finalName>scan-api</finalName>` in `pom.xml`) |
-| Images | `phishlens/scan-api:<short-sha>`, `phishlens/risk-model:<short-sha>`, plus a `b<build-number>` tag |
+| Images | `nikitaravindra/scan-api:<short-sha>`, `nikitaravindra/risk-model:<short-sha>`, plus a `b<build-number>` tag *(Amended 2026-11-12: planned as `phishlens/`. The team agreed on the Docker Hub account `nikitaravindra` because that is where Jenkins pushes and where the manifests pull from.)* |
 | Rule | Never deploy `:latest`. Every running pod must trace back to a commit. |
 
 Optional: Jenkins can push images to a free public Docker Hub repository so Member 3 can pull them on any machine. If you do this, replace `phishlens/` with your Docker Hub username.
