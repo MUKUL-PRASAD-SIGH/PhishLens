@@ -62,7 +62,7 @@ The integration and final demo run on whichever laptop has 16 GB, ideally Member
 
 | Workload | Replicas | CPU request / limit | Memory request / limit |
 |---|---|---|---|
-| `scan-api` | 3 (5 in the manual demo, HPA max 6) | 250m / 500m | 384Mi / 512Mi |
+| `scan-api` | 3 (4 in the manual demo, HPA max 6) *(Amended 2026-11-12: planned as 5. A fifth pod does not fit the 2 GiB Minikube node, so the manual demo ran 3 -> 4 -> 3.)* | 250m / 500m | 384Mi / 512Mi |
 | `risk-model` | 2 | 100m / 250m | 128Mi / 256Mi |
 
 - **CPU:** at 5 `scan-api` pods, requests total about 1.45 CPU. Kubernetes' own system pods use roughly another 0.75 CPU.
