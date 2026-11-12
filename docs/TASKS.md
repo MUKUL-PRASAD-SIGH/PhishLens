@@ -2,7 +2,7 @@
 
 Find your name, read only your section, tick the boxes as you go. Details and reasons live in [TEAM_PLAN.md](TEAM_PLAN.md); API and config rules live in [SPEC.md](SPEC.md).
 
-**Progress (2026-11-05):** All PRs (#11–#19) are merged; `main` holds every branch except `demo/v3-broken` (kept unmerged on purpose). Done: `scan-api`, Jenkins, GitHub Actions, Docker build/push and Trivy stages (Docker Hub screenshots for both images are in), both Dockerfiles, `risk-model` v1/v2, and the first K8s manifests and `demo-scale` scripts. Still open: `docker-compose.yml`, the v3 image, the Ansible role, K8s namespace/HPA manifests, the rest of M3's scripts and demos, and the reports. `[x]` = done, `[~]` = written but not yet verified.
+**Progress (2026-11-12):** All three parts are on `main` (PRs #1–#24); `demo/v3-broken` stays unmerged on purpose. Done: `scan-api` (95 JUnit tests), Jenkins, GitHub Actions, the Docker build, Trivy and push stages, the v3-broken image, `risk-model` v1/v2 with 61 tests, the Ansible role, the Kubernetes manifests, M3's demo scripts and the `evidence/` archive. Still open: the course coordinator's invite and branch protection (M1), M2's report sections, M3's scaling and rollback screenshots and report placeholders, and the demo rehearsal. `[x]` = done, `[~]` = written but not yet verified or only partly shown.
 
 ## The split at a glance
 
@@ -59,11 +59,12 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 
 **Days 12–16: extras**
 - [x] Trivy scan stage; optional GitHub Actions workflow *(Workflow green on `main`; Trivy ran, with before/after shots 26 and 34 and CVE fixes in #16.)*
-- [~] Build the deliberately broken **v3** image on branch `demo/v3-broken` (never merge it) and give M3 the tag by Day 14 *(The branch is rebased onto `main` with 96 tests passing; the image can now be built from `scan-api/Dockerfile` but has not been yet.)*
+- [x] Build the deliberately broken **v3** image on branch `demo/v3-broken` (never merge it) and give M3 the tag by Day 14 *(Pushed as `nikitaravindra/scan-api:c1670ef` and `:v3-broken-c1670ef`, one multi-arch digest. M3 deployed it in the rollback demo, `evidence/k8s/final-20261112/25-rollback-demo.txt`. The branch stays unmerged.)*
 
 **Days 17–21: wrap-up**
-- [~] Screenshots: git graph with a merge, Jenkins config, auto-triggered build, SHA-named artifact, test results *(All now in `docs/report/screenshots/component1/` (shots 14–34); only the report write-up remains.)*
-- [ ] Write and compile the Component 1 report; rehearse your 4-minute demo part
+- [x] Screenshots: git graph with a merge, Jenkins config, auto-triggered build, SHA-named artifact, test results *(All in `docs/report/screenshots/component1/`, shots 14–34.)*
+- [~] Write and compile the Component 1 report *(Written to the assignment format; the title page, certificate and final formatting are still to do.)*
+- [ ] Rehearse your 4-minute demo part
 
 ---
 
@@ -101,30 +102,30 @@ If something is late, use the workaround in the TEAM_PLAN handoffs table and kee
 You wait on others the most early on, so use stand-ins (any Spring Boot JAR, an `nginx` image) until the real pieces arrive.
 
 **Days 1–2: setup**
-- [ ] Ubuntu VM (Multipass), SSH key, `ansible/inventory.ini`; `ansible all -m ping` returns pong
-- [ ] `minikube start --cpus=4 --memory=6g`; apply the namespace and a stand-in nginx Deployment
+- [x] Ubuntu VM (Multipass), SSH key, `ansible/inventory.ini`; `ansible all -m ping` returns pong *(A VirtualBox Ubuntu Server VM was used instead of Multipass; evidence D1–D5 in `evidence/ansible/`.)*
+- [x] `minikube start --cpus=4 --memory=6g`; apply the namespace and a stand-in nginx Deployment *(Minikube ran capped at 2 CPUs and 2 GiB, `evidence/k8s/text-20261105-205710/14-minikube-node-limits.txt`; the namespace is `k8s/00-namespace.yaml`.)*
 
 **Days 3–8: Ansible and manifests**
-- [ ] Ansible role `scan_api`: variables, install Java, create user, copy JAR, systemd template, handler `restart phishlens`
-- [ ] Run the playbook twice: first run changes things, **second run shows `changed=0`**
-- [~] K8s manifests in `k8s/`: ConfigMap, `risk-model` (2 pods, ClusterIP), `scan-api` (3 pods, NodePort), resource limits from SPEC §1.4 *(ConfigMap, risk-model and scan-api are on `main`; the namespace manifest is not yet there and nothing has been applied to a cluster.)*
-- [~] Probes: startup, liveness and readiness for `scan-api` (paths from M1, Day 6); `/health` for `risk-model`
-- [ ] When M2's Dockerfiles land (Day 7), build the images, `minikube image load`, replace the stand-in; curl through the NodePort must show `source: model`
-- [~] `scripts/demo-scale.sh`: 3 → 5 → 2 pods *(`.sh` and `.ps1` are on `main`; not yet run against a cluster.)*
+- [x] Ansible role `scan_api`: variables, install Java, create user, copy JAR, systemd template, handler `restart phishlens` *(`ansible/roles/scan_api/`; syntax check in `evidence/ansible/final-20261105/A00-static-validation.txt`.)*
+- [x] Run the playbook twice: first run changes things, **second run shows `changed=0`** *(Second run `ok=11 changed=0`, D4. The first run is not a clean install: it shows `changed=1`, the apt cache only, D2.)*
+- [x] K8s manifests in `k8s/`: ConfigMap, `risk-model` (2 pods, ClusterIP), `scan-api` (3 pods, NodePort), resource limits from SPEC §1.4 *(Namespace, ConfigMap, both Deployments with Services and the HPA are on `main`; the live cluster matched them, `kubectl diff` exit 0.)*
+- [x] Probes: startup, liveness and readiness for `scan-api` (paths from M1, Day 6); `/health` for `risk-model` *(`evidence/k8s/text-20261105-205710/02`–`04`.)*
+- [x] When M2's Dockerfiles land (Day 7), build the images, `minikube image load`, replace the stand-in; curl through the NodePort must show `source: model` *(Both Deployments run the Docker Hub images tagged `43a2986`; the NodePort returned `source: model`, T15, T16, T18.)*
+- [x] `scripts/demo-scale.sh`: 3 → 5 → 2 pods *(Run as 3 → 4 → 3, F21 and F21b: five `scan-api` pods do not fit the 2 GiB node.)*
 
 **Days 9–11: integration (host it on your laptop)**
-- [ ] Have Minikube running and the repo pulled by Day 9; switch manifests to the Docker Hub images; follow the runbook in TEAM_PLAN
+- [x] Have Minikube running and the repo pulled by Day 9; switch manifests to the Docker Hub images; follow the runbook in TEAM_PLAN *(Images `nikitaravindra/*:43a2986`, D7.)*
 
 **Days 12–16: demos**
-- [ ] ConfigMap demo: change `RISK_THRESHOLD` 0.70 → 0.60 and restart; a borderline URL changes verdict with no code change
-- [ ] Record manual scaling **before** adding the HPA, then enable metrics-server, add `30-hpa.yaml` (min 3, max 6, 60% CPU) and load-test with `hey`
-- [ ] Rolling update `risk-model` to v2 (M2's tag, Day 14)
-- [ ] Rollback demo: deploy M1's v3-broken tag, show the old pods still serving, then `kubectl rollout undo` and `rollout history`
-- [ ] `scripts/demo-rollback.sh` and `scripts/load-test.sh`
+- [x] ConfigMap demo: change `RISK_THRESHOLD` 0.70 → 0.60 and restart; a borderline URL changes verdict with no code change *(SUSPICIOUS at 0.70, MALICIOUS at 0.60, F20b.)*
+- [x] Record manual scaling **before** adding the HPA, then enable metrics-server, add `hpa.yaml` (min 3, max 6) and load-test with `hey` *(The team settled on a 70% CPU target, not 60%: on a 2 GiB node each extra pod is a memory risk, so scaling later is safer. The load test used `scripts/loadgen.py` and scaled 3 → 4; the run was capped at 4, F22.)*
+- [ ] Rolling update `risk-model` to v2 (M2's tag, Day 14) *(Not demonstrable: no v1 image was kept on Docker Hub, F23.)*
+- [x] Rollback demo: deploy M1's v3-broken tag, show the old pods still serving, then `kubectl rollout undo` and `rollout history` *(F25.)*
+- [x] `scripts/demo-rollback.sh` and `scripts/load-test.sh`
 
 **Days 17–21: wrap-up**
-- [ ] Screenshots: both Ansible runs, pods before/after scaling, `get svc` and curl, probes in `describe pod`, the stuck rollout and undo, HPA under load
-- [ ] Compile the Component 2 report from M2's sections and yours; run the full demo twice
+- [~] Screenshots: both Ansible runs, pods before/after scaling, `get svc` and curl, probes in `describe pod`, the stuck rollout and undo, HPA under load *(Ansible and cluster-status screenshots are in `evidence/`; the scaling and rollback screenshots are not, and full text transcripts stand in for them.)*
+- [~] Compile the Component 2 report from M2's sections and yours; run the full demo twice *(M3's part is `docs/report/component2_M3_FINAL.md`; M2's sections and the title page are still placeholders.)*
 
 ---
 

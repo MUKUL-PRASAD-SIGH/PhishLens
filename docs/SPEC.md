@@ -62,7 +62,7 @@ The integration and final demo run on whichever laptop has 16 GB, ideally Member
 
 | Workload | Replicas | CPU request / limit | Memory request / limit |
 |---|---|---|---|
-| `scan-api` | 3 (5 in the manual demo, HPA max 6) | 250m / 500m | 384Mi / 512Mi |
+| `scan-api` | 3 (4 in the manual demo, HPA max 6) *(Amended 2026-11-12: planned as 5. A fifth pod does not fit the 2 GiB Minikube node, so the manual demo ran 3 -> 4 -> 3.)* | 250m / 500m | 384Mi / 512Mi |
 | `risk-model` | 2 | 100m / 250m | 128Mi / 256Mi |
 
 - **CPU:** at 5 `scan-api` pods, requests total about 1.45 CPU. Kubernetes' own system pods use roughly another 0.75 CPU.
@@ -96,7 +96,7 @@ These metrics cover the four golden signals: latency, traffic, errors and satura
 **Cluster**, via the metrics-server addon:
 
 - `kubectl top pods -n phishlens` shows CPU and memory per pod.
-- The HPA scales `scan-api` on average CPU utilization, with a 60% target.
+- The HPA scales `scan-api` on average CPU utilization, with a 70% target. *(Amended 2026-11-12: planned as 60%. The team agreed 70% because each extra pod is a memory risk on the 2 GiB Minikube node, so scaling later is safer. `k8s/hpa.yaml` has run at 70% throughout.)*
 
 ---
 ## 3. Contracts
@@ -189,7 +189,7 @@ These values are environment variables. In Kubernetes they live in the ConfigMap
 | Output | Name |
 |---|---|
 | JAR | `scan-api/target/scan-api.jar` (set `<finalName>scan-api</finalName>` in `pom.xml`) |
-| Images | `phishlens/scan-api:<short-sha>`, `phishlens/risk-model:<short-sha>`, plus a `b<build-number>` tag |
+| Images | `nikitaravindra/scan-api:<short-sha>`, `nikitaravindra/risk-model:<short-sha>`, plus a `b<build-number>` tag *(Amended 2026-11-12: planned as `phishlens/`. The team agreed on the Docker Hub account `nikitaravindra` because that is where Jenkins pushes and where the manifests pull from.)* |
 | Rule | Never deploy `:latest`. Every running pod must trace back to a commit. |
 
 Optional: Jenkins can push images to a free public Docker Hub repository so Member 3 can pull them on any machine. If you do this, replace `phishlens/` with your Docker Hub username.
