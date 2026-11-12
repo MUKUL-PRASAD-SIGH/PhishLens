@@ -1,0 +1,30 @@
+$ kubectl -n phishlens get deployments,replicasets,pods,services,hpa -o wide
+# captured 2026-11-05 20:57:10 +0530
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS   IMAGES                              SELECTOR
+deployment.apps/risk-model   2/2     2            2           7d1h   risk-model   nikitaravindra/risk-model:43a2986   app=risk-model
+deployment.apps/scan-api     3/3     3            3           7d     scan-api     nikitaravindra/scan-api:43a2986     app=scan-api
+
+NAME                                    DESIRED   CURRENT   READY   AGE    CONTAINERS   IMAGES                                      SELECTOR
+replicaset.apps/risk-model-6577bf948f   2         2         2       90m    risk-model   nikitaravindra/risk-model:43a2986           app=risk-model,pod-template-hash=6577bf948f
+replicaset.apps/risk-model-67bcbb566    0         0         0       21h    risk-model   phishlens/risk-model:dev                    app=risk-model,pod-template-hash=67bcbb566
+replicaset.apps/risk-model-68599d5664   0         0         0       7d1h   risk-model   phishlens/risk-model:dev                    app=risk-model,pod-template-hash=68599d5664
+replicaset.apps/scan-api-5b6c69bc7      0         0         0       77m    scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=5b6c69bc7
+replicaset.apps/scan-api-6756c6769c     0         0         0       7d     scan-api     phishlens/scan-api:dev                      app=scan-api,pod-template-hash=6756c6769c
+replicaset.apps/scan-api-688b576665     3         3         3       64m    scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=688b576665
+replicaset.apps/scan-api-7bfc5f6d74     0         0         0       43m    scan-api     nikitaravindra/scan-api:v3-broken-c1670ef   app=scan-api,pod-template-hash=7bfc5f6d74
+replicaset.apps/scan-api-8554bfb48d     0         0         0       21h    scan-api     phishlens/scan-api:dev                      app=scan-api,pod-template-hash=8554bfb48d
+
+NAME                              READY   STATUS    RESTARTS      AGE   IP            NODE       NOMINATED NODE   READINESS GATES
+pod/risk-model-6577bf948f-f92ms   1/1     Running   0             90m   10.244.0.12   minikube   <none>           <none>
+pod/risk-model-6577bf948f-ltg2d   1/1     Running   0             47m   10.244.0.23   minikube   <none>           <none>
+pod/scan-api-688b576665-jkfrd     1/1     Running   0             63m   10.244.0.22   minikube   <none>           <none>
+pod/scan-api-688b576665-xr9mz     1/1     Running   1 (15m ago)   64m   10.244.0.20   minikube   <none>           <none>
+pod/scan-api-688b576665-zv2l2     1/1     Running   0             64m   10.244.0.21   minikube   <none>           <none>
+
+NAME                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE    SELECTOR
+service/risk-model   ClusterIP   10.109.106.186   <none>        8000/TCP         7d1h   app=risk-model
+service/scan-api     NodePort    10.104.189.164   <none>        8080:30080/TCP   7d     app=scan-api
+
+NAME                                               REFERENCE             TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/scan-api-hpa   Deployment/scan-api   cpu: 7%/70%   3         6         3          43m
+# exit code: 0

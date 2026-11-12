@@ -1,0 +1,21 @@
+$ kubectl -n phishlens describe hpa scan-api-hpa
+# captured 2026-11-06 06:58:15 +0530
+Name:                                                  scan-api-hpa
+Namespace:                                             phishlens
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Fri, 06 Nov 2026 06:56:26 +0530
+Reference:                                             Deployment/scan-api
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  3% (8m) / 70%
+Min replicas:                                          3
+Max replicas:                                          6
+Deployment pods:                                       3 current / 3 desired
+Conditions:
+  Type            Status  Reason               Message
+  ----            ------  ------               -------
+  AbleToScale     True    ScaleDownStabilized  recent recommendations were higher than current one, applying the highest recent recommendation
+  ScalingActive   True    ValidMetricFound     the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  False   DesiredWithinRange   the desired count is within the acceptable range
+Events:           <none>
+# exit code: 0

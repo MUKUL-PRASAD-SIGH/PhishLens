@@ -1,0 +1,12 @@
+$ kubectl -n phishlens get replicasets -o custom-columns=NAME:.metadata.name,REVISION:.metadata.annotations.deployment\.kubernetes\.io/revision,CREATED:.metadata.creationTimestamp,DESIRED:.spec.replicas,READY:.status.readyReplicas,IMAGE:.spec.template.spec.containers[0].image
+# captured 2026-11-05 20:57:14 +0530
+NAME                    REVISION   CREATED                DESIRED   READY    IMAGE
+risk-model-6577bf948f   3          2026-11-05T13:57:01Z   2         2        nikitaravindra/risk-model:43a2986
+risk-model-67bcbb566    2          2026-11-04T17:41:29Z   0         <none>   phishlens/risk-model:dev
+risk-model-68599d5664   1          2026-10-29T14:06:08Z   0         <none>   phishlens/risk-model:dev
+scan-api-5b6c69bc7      3          2026-11-05T14:09:29Z   0         <none>   nikitaravindra/scan-api:43a2986
+scan-api-6756c6769c     1          2026-10-29T14:31:57Z   0         <none>   phishlens/scan-api:dev
+scan-api-688b576665     6          2026-11-05T14:22:11Z   3         3        nikitaravindra/scan-api:43a2986
+scan-api-7bfc5f6d74     5          2026-11-05T14:44:04Z   0         <none>   nikitaravindra/scan-api:v3-broken-c1670ef
+scan-api-8554bfb48d     2          2026-11-04T17:41:39Z   0         <none>   phishlens/scan-api:dev
+# exit code: 0

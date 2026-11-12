@@ -1,0 +1,22 @@
+$ kubectl -n phishlens get configmap phishlens-config -o yaml
+# captured 2026-11-06 06:58:14 +0530
+apiVersion: v1
+data:
+  MODEL_PATH: /app/model/model.pkl
+  MODEL_TIMEOUT_MS: "3000"
+  MODEL_URL: http://risk-model:8000
+  MODEL_VERSION: v2
+  PORT: "8000"
+  RISK_THRESHOLD: "0.70"
+  SERVER_PORT: "8080"
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"MODEL_PATH":"/app/model/model.pkl","MODEL_TIMEOUT_MS":"3000","MODEL_URL":"http://risk-model:8000","MODEL_VERSION":"v2","PORT":"8000","RISK_THRESHOLD":"0.70","SERVER_PORT":"8080"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"phishlens-config","namespace":"phishlens"}}
+  creationTimestamp: "2026-10-29T14:06:04Z"
+  name: phishlens-config
+  namespace: phishlens
+  resourceVersion: "34307"
+  uid: d28142e0-e3f0-4c2e-a020-8f1e036e6e26
+# exit code: 0

@@ -1,0 +1,8 @@
+Summary:
+  Total:        180.53 secs
+  Requests:     3341
+  Requests/sec: 18.51
+  Latency p50 0.250s  p90 0.578s  p99 1.016s  max 8.093s
+
+Status code distribution:
+  [200] 3341 responses

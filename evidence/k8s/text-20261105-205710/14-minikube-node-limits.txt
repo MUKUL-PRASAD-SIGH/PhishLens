@@ -1,0 +1,4 @@
+$ docker inspect minikube --format NanoCpus={{.HostConfig.NanoCpus}} MemoryBytes={{.HostConfig.Memory}}
+# captured 2026-11-05 20:57:18 +0530
+NanoCpus=2000000000 MemoryBytes=2147483648
+# exit code: 0

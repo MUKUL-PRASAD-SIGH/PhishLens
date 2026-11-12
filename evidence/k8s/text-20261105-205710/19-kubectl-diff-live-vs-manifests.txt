@@ -1,0 +1,12 @@
+$ for f in k8s/00-namespace.yaml k8s/configmap.yaml k8s/risk-model.yaml k8s/scan-api.yaml k8s/hpa.yaml; do kubectl diff -f $f; echo "exit=$?"; done
+# captured 2026-11-05 20:59:30 +0530  (kubectl diff exit 0 = live object matches the manifest)
+## k8s/00-namespace.yaml
+exit=0
+## k8s/configmap.yaml
+exit=0
+## k8s/risk-model.yaml
+exit=0
+## k8s/scan-api.yaml
+exit=0
+## k8s/hpa.yaml
+exit=0

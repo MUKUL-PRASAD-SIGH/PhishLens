@@ -1,0 +1,15 @@
+$ curl -s "https://hub.docker.com/v2/repositories/nikitaravindra/risk-model/tags?page_size=100"   (name, last_updated, digest)
+# captured 2026-11-06 06:49:46 +0530
+b12 2026-11-05T15:48:01.077058Z sha256:c862edd474ff
+14e63fc 2026-11-05T15:47:56.936945Z sha256:c862edd474ff
+b11 2026-11-05T15:10:41.889666Z sha256:c862edd474ff
+f9377bd 2026-11-05T15:10:37.929839Z sha256:c862edd474ff
+b10 2026-11-05T15:09:01.224731Z sha256:7061df8232c4
+d597702 2026-11-05T15:08:57.279969Z sha256:7061df8232c4
+b9 2026-11-05T14:51:47.554174Z sha256:c862edd474ff
+474a1d4 2026-11-05T14:51:43.464749Z sha256:c862edd474ff
+b8 2026-11-05T12:39:14.841174Z sha256:c862edd474ff
+43a2986 2026-11-05T12:39:10.697222Z sha256:c862edd474ff
+
+$ git log --diff-filter=A --format="%h %ci %s" origin/main -- risk-model/model/model.pkl
+907a520 2026-10-22 21:34:07 +0530 feat(risk-model): FastAPI service with v1 heuristic, v2 trained model, tests and Dockerfile

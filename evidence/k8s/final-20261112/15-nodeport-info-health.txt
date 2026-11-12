@@ -1,0 +1,21 @@
+$ minikube ssh -- curl -s -m 15 -w ' HTTP %{http_code}\n' http://192.168.49.2:30080/api/info; curl -s -m 15 -w ' HTTP %{http_code}\n' http://192.168.49.2:30080/actuator/health
+# captured 2026-11-12 08:16:25 +0530
+{
+    echo '$ kubectl diff -f <each k8s manifest>'
+    echo "# captured $(date '+%Y-%m-%d %H:%M:%S %z')"
+    for f in k8s/00-namespace.yaml k8s/configmap.yaml k8s/risk-model.yaml k8s/scan-api.yaml k8s/hpa.yaml; do
+        echo "## $f"
+        kubectl diff -f "$f"
+        echo "exit=$?"
+    done
+    echo
+    echo '$ kubectl get deploy -A; kubectl get pods -A --field-selector=status.phase!=Running; kubectl -n phishlens get rs (replicas>0)'
+    kubectl get deploy -A
+    kubectl get pods -A --field-selector=status.phase!=Running
+    kubectl -n phishlens get rs --no-headers | awk '$2>0 || $3>0 || $4>0'
+} > "$OUT_DIR/19-diff-and-stray-check.txt"
+echo "wrote $OUT_DIR/19-diff-and-stray-check.txt"
+
+{"service":"scan-api","version":"0.1.0","commit":"43a2986"} HTTP 200
+{"status":"UP","groups":["liveness","readiness"]} HTTP 200
+# exit code: 0

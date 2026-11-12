@@ -1,0 +1,100 @@
+$ bash scripts/demo-rollback.sh --yes
+# started 2026-11-12 08:13:07 +0530
+
+=== 08:13:09 Current state
+image:    nikitaravindra/scan-api:43a2986
+replicas: 3 ready / 3 desired
+NAME                        READY   STATUS    RESTARTS      AGE
+scan-api-66484cf4cc-2p628   1/1     Running   8 (70m ago)   6d10h
+scan-api-66484cf4cc-5nlml   1/1     Running   5 (70m ago)   8h
+scan-api-66484cf4cc-k4x6h   1/1     Running   0             74m
+
+deployment.apps/scan-api 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+5         <none>
+6         <none>
+7         <none>
+8         <none>
+9         <none>
+10        <none>
+
+
+Broken image: nikitaravindra/scan-api:v3-broken-c1670ef (found on registry: yes)
+
+=== 08:13:19 Deploying the broken v3 image
+deployment.apps/scan-api image updated
+deployment.apps/scan-api annotated
+New ReplicaSet pod-template-hash: 7897f6c7d6 (revision 11)
+
+=== 08:13:22 Waiting up to 180s for the new pod to fail
+NAME                        READY   STATUS             RESTARTS      AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+scan-api-66484cf4cc-2p628   1/1     Running            8 (72m ago)   6d10h   10.244.0.8    minikube   <none>           <none>
+scan-api-66484cf4cc-5nlml   1/1     Running            5 (72m ago)   8h      10.244.0.7    minikube   <none>           <none>
+scan-api-66484cf4cc-k4x6h   1/1     Running            0             76m     10.244.0.11   minikube   <none>           <none>
+scan-api-7897f6c7d6-f2lcx   0/1     CrashLoopBackOff   1 (4s ago)    76s     10.244.0.12   minikube   <none>           <none>
+
+New pod is in CrashLoopBackOff.
+
+=== 08:14:36 The rollout is stalled (a timeout here is expected)
+Waiting for deployment "scan-api" rollout to finish: 1 out of 3 new replicas have been updated...
+error: timed out waiting for the condition
+-> rollout did not complete, as expected
+NAME       READY   UP-TO-DATE   AVAILABLE   AGE
+scan-api   3/3     1            3           13d
+NAME                  DESIRED   CURRENT   READY   AGE     CONTAINERS   IMAGES                                      SELECTOR
+scan-api-5b6c69bc7    0         0         0       6d12h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=5b6c69bc7
+scan-api-5d556cc8     0         0         0       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=5d556cc8
+scan-api-66484cf4cc   3         3         3       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=66484cf4cc
+scan-api-6756c6769c   0         0         0       13d     scan-api     phishlens/scan-api:dev                      app=scan-api,pod-template-hash=6756c6769c
+scan-api-688b576665   0         0         0       6d12h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=688b576665
+scan-api-68cf55c98b   0         0         0       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=68cf55c98b
+scan-api-6d97b684d5   0         0         0       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=6d97b684d5
+scan-api-7897f6c7d6   1         1         0       87s     scan-api     nikitaravindra/scan-api:v3-broken-c1670ef   app=scan-api,pod-template-hash=7897f6c7d6
+scan-api-7bfc5f6d74   0         0         0       6d12h   scan-api     nikitaravindra/scan-api:v3-broken-c1670ef   app=scan-api,pod-template-hash=7bfc5f6d74
+scan-api-8554bfb48d   0         0         0       7d9h    scan-api     phishlens/scan-api:dev                      app=scan-api,pod-template-hash=8554bfb48d
+
+=== 08:14:47 Why the v3 pod fails (last lines of its previous container log)
+APPLICATION FAILED TO START
+    Reason: REQUIRED_RELEASE_TOKEN is not set. This is the deliberately broken v3 build for the rollback demo: it will not start without that variable, and the ConfigMap does not provide it. Roll back to the previous image.
+Action:
+
+=== 08:14:47 The old pods are still serving
+Ready replicas during the failed rollout: 3
+GET http://192.168.49.2:30080/api/info (NodePort, sent from inside the Minikube node):
+{"service":"scan-api","version":"0.1.0","commit":"43a2986"} HTTP 200
+
+=== 08:14:49 Rolling back: kubectl rollout undo
+Warning: resource deployments/scan-api was previously managed with 'kubectl apply'. Rolling back will not update the kubectl.kubernetes.io/last-applied-configuration annotation, which may cause unexpected behavior on future 'kubectl apply' operations. Consider using 'kubectl apply' with your previous configuration file instead.
+deployment.apps/scan-api rolled back
+deployment "scan-api" successfully rolled out
+
+=== 08:14:49 Recovered state
+image: nikitaravindra/scan-api:43a2986
+NAME                        READY   STATUS        RESTARTS      AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+scan-api-66484cf4cc-2p628   1/1     Running       8 (72m ago)   6d10h   10.244.0.8    minikube   <none>           <none>
+scan-api-66484cf4cc-5nlml   1/1     Running       5 (72m ago)   8h      10.244.0.7    minikube   <none>           <none>
+scan-api-66484cf4cc-k4x6h   1/1     Running       0             76m     10.244.0.11   minikube   <none>           <none>
+scan-api-7897f6c7d6-f2lcx   0/1     Terminating   2 (18s ago)   90s     10.244.0.12   minikube   <none>           <none>
+
+deployment.apps/scan-api 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+3         <none>
+5         <none>
+6         <none>
+7         <none>
+8         <none>
+9         <none>
+11        rollback demo: deploy broken v3 (nikitaravindra/scan-api:v3-broken-c1670ef)
+12        <none>
+
+GET http://192.168.49.2:30080/api/info (NodePort, sent from inside the Minikube node):
+{"service":"scan-api","version":"0.1.0","commit":"43a2986"} HTTP 200
+
+Rollback demo completed.
+# exit code: 0
+# finished 2026-11-12 08:14:51 +0530

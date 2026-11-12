@@ -1,0 +1,35 @@
+$ kubectl -n phishlens get deployments,replicasets,pods,services,hpa -o wide
+# captured 2026-11-12 08:16:21 +0530
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                              SELECTOR
+deployment.apps/risk-model   2/2     2            2           13d   risk-model   nikitaravindra/risk-model:43a2986   app=risk-model
+deployment.apps/scan-api     3/3     3            3           13d   scan-api     nikitaravindra/scan-api:43a2986     app=scan-api
+
+NAME                                    DESIRED   CURRENT   READY   AGE     CONTAINERS   IMAGES                                      SELECTOR
+replicaset.apps/risk-model-6577bf948f   2         2         2       6d12h   risk-model   nikitaravindra/risk-model:43a2986           app=risk-model,pod-template-hash=6577bf948f
+replicaset.apps/risk-model-67bcbb566    0         0         0       7d9h    risk-model   phishlens/risk-model:dev                    app=risk-model,pod-template-hash=67bcbb566
+replicaset.apps/risk-model-68599d5664   0         0         0       13d     risk-model   phishlens/risk-model:dev                    app=risk-model,pod-template-hash=68599d5664
+replicaset.apps/scan-api-5b6c69bc7      0         0         0       6d12h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=5b6c69bc7
+replicaset.apps/scan-api-5d556cc8       0         0         0       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=5d556cc8
+replicaset.apps/scan-api-66484cf4cc     3         3         3       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=66484cf4cc
+replicaset.apps/scan-api-6756c6769c     0         0         0       13d     scan-api     phishlens/scan-api:dev                      app=scan-api,pod-template-hash=6756c6769c
+replicaset.apps/scan-api-688b576665     0         0         0       6d12h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=688b576665
+replicaset.apps/scan-api-68cf55c98b     0         0         0       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=68cf55c98b
+replicaset.apps/scan-api-6d97b684d5     0         0         0       6d10h   scan-api     nikitaravindra/scan-api:43a2986             app=scan-api,pod-template-hash=6d97b684d5
+replicaset.apps/scan-api-7897f6c7d6     0         0         0       3m1s    scan-api     nikitaravindra/scan-api:v3-broken-c1670ef   app=scan-api,pod-template-hash=7897f6c7d6
+replicaset.apps/scan-api-7bfc5f6d74     0         0         0       6d12h   scan-api     nikitaravindra/scan-api:v3-broken-c1670ef   app=scan-api,pod-template-hash=7bfc5f6d74
+replicaset.apps/scan-api-8554bfb48d     0         0         0       7d9h    scan-api     phishlens/scan-api:dev                      app=scan-api,pod-template-hash=8554bfb48d
+
+NAME                              READY   STATUS    RESTARTS      AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+pod/risk-model-6577bf948f-f92ms   1/1     Running   5 (80m ago)   6d12h   10.244.0.6    minikube   <none>           <none>
+pod/risk-model-6577bf948f-ltg2d   1/1     Running   6 (80m ago)   6d12h   10.244.0.3    minikube   <none>           <none>
+pod/scan-api-66484cf4cc-2p628     1/1     Running   8 (74m ago)   6d10h   10.244.0.8    minikube   <none>           <none>
+pod/scan-api-66484cf4cc-5nlml     1/1     Running   5 (74m ago)   8h      10.244.0.7    minikube   <none>           <none>
+pod/scan-api-66484cf4cc-k4x6h     1/1     Running   0             77m     10.244.0.11   minikube   <none>           <none>
+
+NAME                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE   SELECTOR
+service/risk-model   ClusterIP   10.109.106.186   <none>        8000/TCP         13d   app=risk-model
+service/scan-api     NodePort    10.104.189.164   <none>        8080:30080/TCP   13d   app=scan-api
+
+NAME                                               REFERENCE             TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/scan-api-hpa   Deployment/scan-api   cpu: 1%/70%   3         6         3          14s
+# exit code: 0

@@ -1,0 +1,5 @@
+$ kubectl -n kube-system get deployment metrics-server
+# captured 2026-11-12 08:16:24 +0530
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+metrics-server   1/1     1            1           13d
+# exit code: 0

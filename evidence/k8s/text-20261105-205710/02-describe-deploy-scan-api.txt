@@ -1,0 +1,52 @@
+$ kubectl -n phishlens describe deployment scan-api
+# captured 2026-11-05 20:57:11 +0530
+Name:                   scan-api
+Namespace:              phishlens
+CreationTimestamp:      Thu, 29 Oct 2026 20:01:57 +0530
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 6
+Selector:               app=scan-api
+Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:       app=scan-api
+  Annotations:  kubectl.kubernetes.io/restartedAt: 2026-11-05T19:52:11+05:30
+  Containers:
+   scan-api:
+    Image:      nikitaravindra/scan-api:43a2986
+    Port:       8080/TCP (http)
+    Host Port:  0/TCP (http)
+    Limits:
+      cpu:     500m
+      memory:  512Mi
+    Requests:
+      cpu:      250m
+      memory:   384Mi
+    Liveness:   http-get http://:http/actuator/health/liveness delay=0s timeout=3s period=20s #success=1 #failure=3
+    Readiness:  http-get http://:http/actuator/health/readiness delay=0s timeout=3s period=10s #success=1 #failure=3
+    Startup:    http-get http://:http/actuator/health delay=0s timeout=3s period=5s #success=1 #failure=60
+    Environment Variables from:
+      phishlens-config  ConfigMap  Optional: false
+    Environment:
+      JAVA_TOOL_OPTIONS:  -XX:MaxRAMPercentage=75
+    Mounts:               <none>
+  Volumes:                <none>
+  Node-Selectors:         <none>
+  Tolerations:            <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Progressing    True    NewReplicaSetAvailable
+  Available      True    MinimumReplicasAvailable
+OldReplicaSets:  scan-api-6756c6769c (0/0 replicas created), scan-api-8554bfb48d (0/0 replicas created), scan-api-5b6c69bc7 (0/0 replicas created), scan-api-7bfc5f6d74 (0/0 replicas created)
+NewReplicaSet:   scan-api-688b576665 (3/3 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  45m   deployment-controller  Scaled up replica set scan-api-688b576665 from 3 to 4
+  Normal  ScalingReplicaSet  44m   deployment-controller  Scaled down replica set scan-api-688b576665 from 4 to 3
+  Normal  ScalingReplicaSet  43m   deployment-controller  Scaled up replica set scan-api-7bfc5f6d74 from 0 to 1
+  Normal  ScalingReplicaSet  38m   deployment-controller  Scaled down replica set scan-api-7bfc5f6d74 from 1 to 0
+# exit code: 0

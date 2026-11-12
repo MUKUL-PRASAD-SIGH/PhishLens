@@ -1,0 +1,35 @@
+# finished 2026-11-05 21:52:47 +0530
+NAME           REFERENCE             TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+scan-api-hpa   Deployment/scan-api   cpu: 59%/70%   3         4         4          5m9s
+Name:                                                  scan-api-hpa
+Namespace:                                             phishlens
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Thu, 05 Nov 2026 21:47:38 +0530
+Reference:                                             Deployment/scan-api
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  59% (149m) / 70%
+Min replicas:                                          3
+Max replicas:                                          4
+Deployment pods:                                       4 current / 4 desired
+Conditions:
+  Type            Status  Reason               Message
+  ----            ------  ------               -------
+  AbleToScale     True    ScaleDownStabilized  recent recommendations were higher than current one, applying the highest recent recommendation
+  ScalingActive   True    ValidMetricFound     the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooManyReplicas      the desired replica count is more than the maximum replica count
+  ScaledToZero    False   NotScaledToZero      the HPA controller did not scale the workload to zero
+Events:
+  Type    Reason             Age    From                       Message
+  ----    ------             ----   ----                       -------
+  Normal  SuccessfulRescale  2m47s  horizontal-pod-autoscaler  New size: 4; reason: cpu resource utilization (percentage of request) above target
+NAME                        CPU(cores)   MEMORY(bytes)   
+scan-api-66484cf4cc-ds7bh   8m           180Mi           
+scan-api-66484cf4cc-ghghl   64m          155Mi           
+scan-api-66484cf4cc-qh24f   8m           181Mi           
+scan-api-66484cf4cc-wjrgk   7m           177Mi           
+NAME                        READY   STATUS    RESTARTS   AGE     IP            NODE       NOMINATED NODE   READINESS GATES
+scan-api-66484cf4cc-ds7bh   1/1     Running   0          9m38s   10.244.0.36   minikube   <none>           <none>
+scan-api-66484cf4cc-ghghl   1/1     Running   0          2m47s   10.244.0.39   minikube   <none>           <none>
+scan-api-66484cf4cc-qh24f   1/1     Running   0          8m50s   10.244.0.37   minikube   <none>           <none>
+scan-api-66484cf4cc-wjrgk   1/1     Running   0          10m     10.244.0.35   minikube   <none>           <none>

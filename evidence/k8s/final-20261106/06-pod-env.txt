@@ -1,0 +1,8 @@
+$ kubectl -n phishlens exec scan-api-66484cf4cc-2p628 -- printenv SERVER_PORT MODEL_URL RISK_THRESHOLD MODEL_TIMEOUT_MS JAVA_TOOL_OPTIONS
+# captured 2026-11-06 06:58:14 +0530
+8080
+http://risk-model:8000
+0.70
+3000
+-XX:MaxRAMPercentage=75
+# exit code: 0

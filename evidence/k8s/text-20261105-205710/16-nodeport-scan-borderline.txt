@@ -1,0 +1,4 @@
+$ minikube ssh -- curl -s -m 20 -w ' HTTP %{http_code}\n' -X POST -H 'Content-Type: application/json' -d '{"url":"http://shop.example.net/item?id=123456789"}' http://192.168.49.2:30080/api/scan
+# captured 2026-11-05 20:57:23 +0530
+{"url":"http://shop.example.net/item?id=123456789","score":0.64,"verdict":"SUSPICIOUS","source":"model","modelVersion":"v2","scannedAt":"2026-11-05T15:27:24Z"} HTTP 200
+# exit code: 0
